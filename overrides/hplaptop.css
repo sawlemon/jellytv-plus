@@ -1,0 +1,2 @@
+/* hplaptop / Samsung Tizen 6 TV: gray letterbox bars around video (jellyfin-tizen #65) */
+html.layout-tv .videoPlayerContainer { background: transparent !important; }

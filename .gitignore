@@ -1,3 +1,6 @@
 .DS_Store
 *.tok
 .env
+screenshots/reference/
+backups/
+__pycache__/

@@ -1,0 +1,1711 @@
+/*
+ * Jelly TV+ — an Apple TV app look for Jellyfin (web 12.x, MUI + legacy layouts)
+ * https://github.com/sawlemon/jellytv-plus
+ *
+ * Font: Apple devices render the real SF Pro via the system font stack.
+ * Everything else falls back to Inter (SF Pro may not be redistributed).
+ * Selectors avoid :is()/:where()/:has() in rules that must work on Tizen 6
+ * (Chromium 76); :has() is only used for desktop-only refinements.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --jtv-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --jtv-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --jtv-bg: #000;
+  --jtv-bg-elevated: #1d1d1e;
+  --jtv-label: #fff;
+  --jtv-label-2: rgba(235, 235, 245, 0.6);
+  --jtv-label-3: rgba(235, 235, 245, 0.3);
+  --jtv-accent: #0a84ff;
+  --jtv-accent-text: #2b95ff;
+  --jtv-fill: rgba(118, 118, 128, 0.24);
+  --jtv-fill-2: rgba(118, 118, 128, 0.36);
+  --jtv-separator: rgba(84, 84, 88, 0.6);
+
+  /* Liquid glass */
+  /* smoked tint: ~#262626 over black (iPad sample #292929), still legible over bright frames */
+  --jtv-glass: rgba(84, 84, 88, 0.46);
+  --jtv-glass-strong: rgba(42, 42, 44, 0.72);
+  --jtv-glass-hover: rgba(112, 112, 118, 0.52);
+  --jtv-glass-filter: blur(24px) saturate(180%) brightness(0.62);
+  --jtv-glass-rim: inset 0 0.5px 0 rgba(255, 255, 255, 0.32), inset 0 -0.5px 0 rgba(255, 255, 255, 0.06), 0 0 0 0.5px rgba(255, 255, 255, 0.07);
+  --jtv-glass-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
+
+  --jtv-radius-card: 12px;
+  --jtv-radius-poster: 10px;
+  --jtv-hairline: inset 0 0 0 1px rgba(255, 255, 255, 0.13);
+  --jtv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* TVs: blur is expensive on Tizen/webOS — use denser fills instead */
+html.layout-tv {
+  --jtv-glass: rgba(58, 58, 62, 0.88);
+  --jtv-glass-strong: rgba(40, 40, 42, 0.96);
+  --jtv-glass-filter: none;
+}
+
+/* ───────────────────────── Base & typography ───────────────────────── */
+
+/* only the canvas is painted: Jellyfin's backdrop layer sits at z-index -1 under body */
+html { background: var(--jtv-bg) !important; }
+body { background: transparent !important; }
+html, body {
+  color: var(--jtv-label);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, button, input, select, textarea,
+h1, h2, h3, h4, h5, h6,
+.emby-button, .emby-input, .emby-select, .emby-textarea, .emby-tab-button,
+.cardText, .sectionTitle, .listItemBodyText, .itemName, .pageTitle, .navMenuOptionText,
+.MuiTypography-root, .MuiButtonBase-root, .MuiButton-root, .MuiChip-root,
+.MuiInputBase-root, .MuiInputBase-input, .MuiFormLabel-root, .MuiMenuItem-root,
+.MuiListItemText-primary, .MuiListItemText-secondary, .MuiListSubheader-root,
+.MuiTab-root, .MuiTooltip-tooltip, .MuiAlert-message, .MuiTableCell-root, .MuiDialogTitle-root {
+  font-family: var(--jtv-font) !important;
+}
+
+h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3 {
+  font-family: var(--jtv-font-display) !important;
+  letter-spacing: -0.015em;
+}
+
+.backgroundContainer { background-color: var(--jtv-bg) !important; }
+
+::selection { background: rgba(10, 132, 255, 0.45); }
+
+/* Thin overlay scrollbars like macOS */
+::-webkit-scrollbar { width: 11px; height: 11px; background: transparent; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.45); }
+::-webkit-scrollbar-corner { background: transparent; }
+.layout-tv ::-webkit-scrollbar { display: none; }
+
+.button-link { color: var(--jtv-accent-text) !important; }
+
+/* ───────────────────────── Header (MUI app bar) ───────────────────────── */
+
+.MuiAppBar-root.MuiAppBar-positionFixed {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  color: #fff !important;
+}
+
+/* progressive scroll-edge blur behind the floating controls */
+.MuiAppBar-root.MuiAppBar-positionFixed::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: calc(100% + 28px);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.42) 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.MuiAppBar-root > .MuiToolbar-root:first-child {
+  min-height: 76px !important;
+  position: relative;
+  justify-content: flex-end;
+}
+
+/* "Jelly TV+" wordmark */
+.MuiAppBar-root > .MuiToolbar-root:first-child::before {
+  content: "Jelly TV+";
+  position: absolute;
+  left: 3.3%;
+  left: max(24px, 3.3%);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--jtv-font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Floating glass tab pill (iPad Apple TV) */
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  right: 0;
+  width: max-content;
+  max-width: calc(100% - 420px);
+  margin: 0 auto;
+  height: 50px;
+  padding: 4px;
+  gap: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root::-webkit-scrollbar { display: none; }
+
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-root {
+  height: 42px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 18px !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em;
+  text-transform: none !important;
+  white-space: nowrap;
+  transition: background-color 0.25s var(--jtv-ease), color 0.25s var(--jtv-ease);
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-root:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a .MuiButton-startIcon {
+  display: none !important;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-colorPrimary {
+  background: rgba(0, 0, 0, 0.42) !important;
+  color: var(--jtv-accent-text) !important;
+  font-weight: 600 !important;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a .MuiTouchRipple-root { display: none; }
+
+/* The server-logo link becomes the "Home" tab */
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a[href="#/"] {
+  font-size: 0 !important;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a[href="#/"]::after {
+  content: "Home";
+  font-size: 17px;
+}
+body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButton-colorPrimary)) > a[href="#/"] {
+  background: rgba(0, 0, 0, 0.42) !important;
+  color: var(--jtv-accent-text) !important;
+  font-weight: 600 !important;
+}
+
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root,
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { box-sizing: border-box; }
+
+/* Right-hand controls: grouped glass capsule + avatar circle */
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root {
+  flex: 0 0 auto !important;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 0 4px;
+  margin-left: 10px;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child {
+  width: 50px;
+  padding: 0;
+  justify-content: center;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root {
+  width: 42px;
+  height: 42px;
+  padding: 9px !important;
+  color: #fff !important;
+  border-radius: 999px;
+}
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.MuiAppBar-root .MuiAvatar-root {
+  width: 34px !important;
+  height: 34px !important;
+  background: linear-gradient(180deg, #8e8e93, #636366) !important;
+  color: #fff !important;
+  font-size: 15px !important;
+}
+
+/* Library toolbar (second row): big title, white Play pill, glass groups */
+.MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root {
+  min-height: 64px !important;
+  gap: 10px;
+}
+.MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  text-transform: none;
+}
+.MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root > .MuiButton-root {
+  text-transform: none !important;
+  color: #fff !important;
+  padding-left: 0 !important;
+}
+.MuiAppBar-root .MuiChip-root {
+  height: 26px !important;
+  background: var(--jtv-fill) !important;
+  color: var(--jtv-label-2) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+.MuiAppBar-root .MuiButtonGroup-root {
+  box-shadow: none !important;
+  border-radius: 999px !important;
+  align-items: center;
+}
+.MuiAppBar-root .MuiButtonGroup-root .MuiButton-root {
+  min-width: 40px !important;
+  height: 40px;
+  border: 0 !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+}
+.MuiAppBar-root .MuiButtonGroup-contained {
+  gap: 10px;
+  background: transparent !important;
+}
+.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-firstButton {
+  background: #fff !important;
+  color: #000 !important;
+  padding: 0 20px 0 16px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-firstButton:hover { background: #e8e8ed !important; }
+.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-lastButton,
+.MuiAppBar-root .MuiButtonGroup-text {
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim) !important;
+}
+.MuiAppBar-root .MuiButtonGroup-text { padding: 0 3px; height: 44px; }
+.MuiAppBar-root .MuiButtonGroup-text .MuiButton-root:hover,
+.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-lastButton:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
+.MuiAppBar-root .MuiButtonGroup-root .Mui-disabled { color: rgba(255, 255, 255, 0.28) !important; }
+
+/* A–Z jump bar */
+.alphaPicker-fixed-right .MuiPaper-root {
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim) !important;
+  border-radius: 999px !important;
+  padding: 6px 0;
+}
+.alphaPicker-fixed-right .MuiToggleButton-root {
+  border: 0 !important;
+  color: var(--jtv-label-2) !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  padding: 2px 7px !important;
+}
+.alphaPicker-fixed-right .MuiToggleButton-root.Mui-selected,
+.alphaPicker-fixed-right .MuiToggleButton-root:hover {
+  color: var(--jtv-accent-text) !important;
+  background: transparent !important;
+}
+
+/* ───────────────────────── Legacy header (TV / legacy layout) ───────────────────────── */
+
+.skinHeader {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0)) !important;
+  box-shadow: none !important;
+  color: #fff;
+}
+.skinHeader.semiTransparent { background: transparent !important; }
+
+.pageTitleWithDefaultLogo,
+.pageTitleWithLogo {
+  background-image: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+}
+.pageTitleWithDefaultLogo::before,
+.pageTitleWithLogo::before {
+  content: "Jelly TV+";
+  font-family: var(--jtv-font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.headerTabs .emby-tabs-slider,
+.sectionTabs .emby-tabs-slider {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+}
+.emby-tab-button {
+  border-radius: 999px !important;
+  padding: 0.55em 1.2em !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  border: 0 !important;
+}
+.emby-tab-button.emby-tab-button-active {
+  background: rgba(0, 0, 0, 0.42) !important;
+  color: var(--jtv-accent-text) !important;
+  font-weight: 600 !important;
+}
+.emby-tab-button-selection-bar { display: none !important; }
+.layout-tv .emby-tab-button:focus {
+  background: #fff !important;
+  color: #000 !important;
+  transform: scale(1.06);
+}
+
+/* ───────────────────────── Sidebar / drawers (iPad glass sidebar) ───────────────────────── */
+
+.mainDrawer,
+.MuiDrawer-paper {
+  background: rgba(28, 28, 30, 0.62) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-right: 0.5px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.45) !important;
+  color: #fff !important;
+}
+.layout-tv .mainDrawer { background: rgba(28, 28, 30, 0.97) !important; }
+
+.mainDrawer-scrollContainer { padding: 12px 10px 24px !important; }
+
+.navMenuOption,
+.MuiDrawer-paper .MuiListItemButton-root {
+  margin: 2px 0 !important;
+  padding: 10px 14px !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: 500;
+  transition: background-color 0.2s var(--jtv-ease);
+}
+.navMenuOption:hover,
+.MuiDrawer-paper .MuiListItemButton-root:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+.navMenuOption-selected,
+.MuiDrawer-paper .MuiListItemButton-root.Mui-selected {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+.navMenuOptionIcon,
+.MuiDrawer-paper .MuiListItemIcon-root {
+  color: var(--jtv-accent) !important;
+  min-width: 36px !important;
+}
+.sidebarHeader,
+.MuiDrawer-paper .MuiListSubheader-root {
+  background: transparent !important;
+  color: var(--jtv-label-3) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  padding-left: 14px !important;
+  margin: 18px 0 4px !important;
+  text-transform: none !important;
+  letter-spacing: 0;
+}
+.MuiDrawer-paper .MuiDivider-root { border-color: rgba(255, 255, 255, 0.06) !important; }
+.MuiDrawer-modal .MuiDrawer-paper { width: 320px !important; width: min(320px, 84vw) !important; }
+.MuiDrawer-paper .MuiList-root { padding: 8px 10px !important; }
+
+/* drawer header: server logo + name → "Jelly TV+" */
+.MuiDrawer-paper a.MuiListItemButton-root[href="#/"] {
+  background: transparent !important;
+  padding: 18px 14px 14px !important;
+}
+.MuiDrawer-paper a.MuiListItemButton-root[href="#/"] > * { display: none !important; }
+.MuiDrawer-paper a.MuiListItemButton-root[href="#/"]::after {
+  content: "Jelly TV+";
+  font-family: var(--jtv-font-display);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: #fff;
+}
+
+/* ───────────────────────── Sections & titles ───────────────────────── */
+
+.sectionTitle,
+.sectionTitle-cards,
+.sectionTitleTextButton {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35em !important;
+}
+.sectionTitleTextButton .material-icons,
+.sectionTitleTextButton svg {
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-size: 26px !important;
+  margin-left: 0 !important;
+}
+.sectionTitleTextButton { text-decoration: none !important; padding: 0 !important; }
+
+/* scroll arrows → small glass circles */
+.emby-scrollbuttons-button {
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  margin-left: 8px !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim);
+  color: #fff !important;
+}
+.emby-scrollbuttons-button {
+  -webkit-clip-path: inset(0 round 999px);
+  clip-path: inset(0 round 999px);
+}
+.emby-scrollbuttons-button .material-icons,
+.emby-scrollbuttons-button svg { font-size: 22px !important; }
+.emby-scrollbuttons-button[disabled] { opacity: 0.35; }
+
+/* ───────────────────────── Cards ───────────────────────── */
+
+.cardBox { transition: transform 0.4s var(--jtv-ease); }
+
+.cardScalable {
+  border-radius: var(--jtv-radius-card) !important;
+  overflow: hidden;
+  background: #1c1c1e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.45s var(--jtv-ease), box-shadow 0.45s var(--jtv-ease);
+}
+.portraitCard .cardScalable,
+.overflowPortraitCard .cardScalable,
+.squareCard .cardScalable,
+.overflowSquareCard .cardScalable { border-radius: var(--jtv-radius-poster) !important; }
+
+/* glass rim on every artwork tile */
+.cardScalable::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  box-shadow: var(--jtv-hairline);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.cardContent,
+.cardImageContainer,
+.cardImage {
+  border-radius: inherit !important;
+}
+.cardContent-shadow { box-shadow: none !important; }
+.defaultCardBackground,
+.cardImageContainer.defaultCardBackground {
+  background: linear-gradient(160deg, #3a3a3c, #1c1c1e) !important;
+}
+
+/* hover / focus lift (macOS hover, tvOS focus) */
+.layout-desktop .card-hoverable:hover .cardScalable {
+  transform: scale(1.035);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+}
+.layout-tv .card:focus .cardScalable {
+  transform: scale(1.1);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.7);
+}
+.layout-tv .card:focus .cardBox,
+.layout-tv .cardBox-focustransform { transform: none !important; border: 0 !important; }
+.layout-tv .card:focus .cardScalable::after { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35); }
+.card:focus .cardBox.visualCardBox,
+.card:focus .cardBox:not(.visualCardBox) .cardScalable { border: 0 !important; }
+
+/* text under posters (Mac library style) */
+.cardText {
+  font-size: 14px !important;
+  font-weight: 500;
+  color: #fff;
+  padding: 0.12em 0.15em !important;
+  line-height: 1.3 !important;
+}
+.cardText.cardText-secondary {
+  font-size: 13px !important;
+  font-weight: 400;
+  color: var(--jtv-label-2) !important;
+}
+.cardText .textActionButton { color: inherit !important; font-weight: inherit; }
+.portraitCard .cardText,
+.overflowPortraitCard .cardText,
+.squareCard .cardText,
+.overflowSquareCard .cardText {
+  text-align: left !important;
+  padding-left: 2px !important;
+}
+
+/* Landscape tiles: metadata sits inside the artwork over a frosted fade (Apple TV "Continue Watching") */
+.backdropCard .cardBox,
+.overflowBackdropCard .cardBox,
+.smallBackdropCard .cardBox {
+  display: grid !important;
+  grid-template-columns: 100%;
+  grid-template-rows: 1fr auto auto auto 12px;
+  padding-bottom: 0 !important;
+}
+.backdropCard .cardScalable,
+.overflowBackdropCard .cardScalable,
+.smallBackdropCard .cardScalable {
+  grid-row: 1 / 6;
+  grid-column: 1;
+}
+.backdropCard .cardText,
+.overflowBackdropCard .cardText,
+.smallBackdropCard .cardText {
+  grid-column: 1;
+  z-index: 6;
+  align-self: end;
+  text-align: left !important;
+  padding: 0 46px 0 16px !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.backdropCard .cardText a,
+.overflowBackdropCard .cardText a,
+.smallBackdropCard .cardText a { pointer-events: auto; }
+.backdropCard .cardText-first,
+.overflowBackdropCard .cardText-first,
+.smallBackdropCard .cardText-first {
+  grid-row: 2;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.backdropCard .cardText.cardText-secondary,
+.overflowBackdropCard .cardText.cardText-secondary,
+.smallBackdropCard .cardText.cardText-secondary {
+  grid-row: 3;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-weight: 500 !important;
+}
+.backdropCard .cardText:not(.cardText-first):not(.cardText-secondary),
+.overflowBackdropCard .cardText:not(.cardText-first):not(.cardText-secondary) {
+  grid-row: 4;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.backdropCard .cardFooter,
+.overflowBackdropCard .cardFooter {
+  grid-row: 2 / 5;
+  grid-column: 1;
+  z-index: 6;
+  align-self: end;
+  background: transparent !important;
+  text-align: left;
+  padding: 0 46px 0 16px !important;
+}
+.backdropCard .cardContent::after,
+.overflowBackdropCard .cardContent::after,
+.smallBackdropCard .cardContent::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 58%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.28) 45%, rgba(0, 0, 0, 0.62) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 62%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 62%);
+  pointer-events: none;
+  z-index: 1;
+}
+.layout-tv .backdropCard .cardContent::after,
+.layout-tv .overflowBackdropCard .cardContent::after {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.75) 100%);
+}
+
+/* progress: small white capsule (Apple's "▶ ━━ 2h 9m") */
+.itemProgressBar {
+  height: 4px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.32) !important;
+  overflow: hidden;
+}
+.itemProgressBarForeground,
+.itemProgressBar .MuiLinearProgress-bar {
+  background: #fff !important;
+  border-radius: 999px !important;
+}
+.innerCardFooter {
+  background: transparent !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  z-index: 2;
+}
+.cardScalable .MuiLinearProgress-bar { background: #fff !important; border-radius: 999px; }
+
+/* landscape: "▶ ━━ 1982" row exactly like Apple's resume tiles */
+.backdropCard .cardScalable .itemProgressBar,
+.overflowBackdropCard .cardScalable .itemProgressBar,
+.smallBackdropCard .cardScalable .itemProgressBar {
+  position: absolute !important;
+  left: 33px !important;
+  right: auto !important;
+  bottom: 18px !important;
+  width: 40px !important;
+  margin: 0 !important;
+}
+.backdropCard[data-positionticks] .cardText.cardText-secondary,
+.overflowBackdropCard[data-positionticks] .cardText.cardText-secondary,
+.smallBackdropCard[data-positionticks] .cardText.cardText-secondary { padding-left: 16px !important; }
+.backdropCard[data-positionticks] .cardText.cardText-secondary::before,
+.overflowBackdropCard[data-positionticks] .cardText.cardText-secondary::before,
+.smallBackdropCard[data-positionticks] .cardText.cardText-secondary::before {
+  content: "\25B6";
+  display: inline-block;
+  font-size: 10px;
+  width: 64px;
+  color: #fff;
+  vertical-align: 1px;
+}
+/* posters keep a slim full-width bar along the bottom edge */
+.portraitCard .cardScalable .itemProgressBar,
+.overflowPortraitCard .cardScalable .itemProgressBar,
+.squareCard .cardScalable .itemProgressBar {
+  margin: 0 10px 10px !important;
+}
+
+/* library tiles already carry their name in the artwork */
+.card[data-type="CollectionFolder"]:has(.cardImageContainer[style*="url("]) .cardText { display: none !important; }
+
+/* status badges */
+.playedIndicator,
+.countIndicator {
+  background: rgba(30, 30, 32, 0.55) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--jtv-glass-rim);
+  color: #fff !important;
+  width: 26px !important;
+  height: 26px !important;
+  font-size: 13px !important;
+  font-weight: 600;
+}
+.playedIndicator .material-icons,
+.playedIndicator svg { font-size: 17px !important; }
+
+/* hover overlay controls → glass */
+.cardOverlayContainer {
+  background: transparent !important;
+}
+.cardOverlayContainer > a.cardImageContainer { background: rgba(0, 0, 0, 0.12) !important; }
+.cardOverlayButton {
+  color: #fff !important;
+  border-radius: 999px !important;
+}
+.cardOverlayButton.cardOverlayFab-primary {
+  width: 56px !important;
+  height: 56px !important;
+  padding: 0 !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow) !important;
+  border: 0 !important;
+}
+.cardOverlayButton.cardOverlayFab-primary:hover { background: var(--jtv-glass-hover) !important; }
+.cardOverlayFab-primary svg,
+.cardOverlayFab-primary .material-icons { font-size: 30px !important; }
+.cardOverlayButton-br {
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px !important;
+  background: rgba(30, 30, 32, 0.5) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: var(--jtv-glass-rim);
+}
+.cardOverlayButton-br .cardOverlayButton {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 6px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+.cardOverlayButton-br .cardOverlayButton:hover { background: rgba(255, 255, 255, 0.14) !important; }
+.cardOverlayButton-br svg,
+.cardOverlayButton-br .material-icons { font-size: 19px !important; }
+
+/* ───────────────────────── Buttons & form controls ───────────────────────── */
+
+.emby-button.raised,
+.raised {
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.01em;
+  box-shadow: none !important;
+  background: var(--jtv-fill-2) !important;
+  color: #fff !important;
+}
+.raised.button-submit,
+.emby-button.button-submit {
+  background: var(--jtv-accent) !important;
+  color: #fff !important;
+}
+.raised:hover { filter: brightness(1.12); }
+.layout-tv .raised:focus {
+  background: #fff !important;
+  color: #000 !important;
+  transform: scale(1.04);
+}
+
+.emby-input,
+.emby-textarea,
+.emby-select,
+.MuiOutlinedInput-root,
+.MuiFilledInput-root {
+  background: var(--jtv-fill) !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+.emby-input:focus,
+.emby-textarea:focus,
+.emby-select:focus,
+.MuiOutlinedInput-root.Mui-focused {
+  border-color: var(--jtv-accent) !important;
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.35) !important;
+}
+.MuiOutlinedInput-notchedOutline { border: 0 !important; }
+.inputLabel,
+.selectLabel { color: var(--jtv-label-2) !important; }
+
+.emby-checkbox:checked + span + .checkboxOutline {
+  background-color: var(--jtv-accent) !important;
+  border-color: var(--jtv-accent) !important;
+}
+.checkboxOutline { border-radius: 6px !important; }
+.MuiCheckbox-root.Mui-checked,
+.MuiSwitch-switchBase.Mui-checked { color: var(--jtv-accent) !important; }
+.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track { background-color: #30d158 !important; opacity: 1 !important; }
+
+/* ───────────────────────── Menus, dialogs, sheets (glass panels) ───────────────────────── */
+
+.MuiMenu-paper,
+.MuiPopover-paper,
+.actionSheet,
+.MuiDialog-paper,
+.dialog:not(.dialog-fullscreen) {
+  background: var(--jtv-glass-strong) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 14px !important;
+  box-shadow: var(--jtv-glass-rim), 0 18px 50px rgba(0, 0, 0, 0.55) !important;
+  color: #fff !important;
+  background-image: none !important;
+}
+.actionSheetContent { background: transparent !important; box-shadow: none !important; }
+.MuiMenu-list { padding: 6px !important; }
+.MuiMenuItem-root,
+.actionSheetMenuItem {
+  border-radius: 8px !important;
+  min-height: 0 !important;
+  font-size: 15px !important;
+}
+.MuiMenuItem-root { padding: 7px 12px !important; }
+.MuiMenuItem-root:hover,
+.actionSheetMenuItem:hover,
+.MuiMenuItem-root.Mui-focusVisible { background: var(--jtv-accent) !important; }
+.MuiMenu-paper .MuiListItemIcon-root { color: inherit !important; min-width: 30px !important; }
+.MuiMenu-paper .MuiDivider-root { border-color: rgba(255, 255, 255, 0.1) !important; margin: 5px 8px !important; }
+.MuiBackdrop-root:not(.MuiBackdrop-invisible),
+.dialogBackdropOpened { background: rgba(0, 0, 0, 0.45) !important; }
+.formDialogHeader,
+.dialogHeader { background: transparent !important; }
+.MuiTooltip-tooltip {
+  background: rgba(50, 50, 52, 0.92) !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+}
+.toast {
+  background: var(--jtv-glass-strong) !important;
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  border-radius: 14px !important;
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow) !important;
+  color: #fff !important;
+}
+
+/* ───────────────────────── Item details (Apple TV hero) ───────────────────────── */
+
+/* The page is transparent so Jellyfin's fixed backdrop layer becomes the hero;
+   content then scrolls up over it the way the Apple TV hero does. */
+.itemDetailPage { background: transparent !important; }
+.backgroundContainer.withBackdrop { background-color: rgba(0, 0, 0, 0.35) !important; }
+body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { background-color: transparent !important; }
+.backdropImage { background-position: center top !important; }
+
+.itemDetailPage .itemBackdrop {
+  height: 82vh !important;
+  min-height: 460px;
+  background: none !important;
+  margin-top: 0 !important;
+  position: relative;
+}
+.itemDetailPage .itemBackdrop::after {
+  content: "";
+  position: absolute;
+  top: -80px; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(to right, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.38) 34%, rgba(0, 0, 0, 0) 62%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.6) 76%, #000 100%);
+  pointer-events: none;
+}
+.itemDetailPage .detailPageWrapperContainer {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, #000 220px) !important;
+}
+.itemDetailPage .detailPageSecondaryContainer {
+  background: var(--jtv-bg-elevated) !important;
+  margin-top: 0 !important;
+  padding-top: 26px !important;
+  padding-bottom: 40px;
+  min-height: 40vh;
+}
+.itemDetailPage .detailPagePrimaryContent .itemDetailsGroup { padding-bottom: 28px; }
+/* seasons / next up rows start the gray canvas, full-bleed */
+.itemDetailPage .detailPagePrimaryContent .detailVerticalSection {
+  background: var(--jtv-bg-elevated);
+  box-shadow: 0 0 0 100vmax var(--jtv-bg-elevated);
+  -webkit-clip-path: inset(0 -100vmax);
+  clip-path: inset(0 -100vmax);
+  padding-top: 26px;
+  margin: 0 0 -1px !important;
+}
+.playstatebutton-icon-played,
+.itemDetailPage .mainDetailButtons .playstatebutton-icon-played { color: #fff !important; }
+
+/* title art goes bottom-left like Apple TV */
+.itemDetailPage .detailLogo {
+  position: absolute !important;
+  top: calc(82vh - 360px) !important;
+  left: 3.3% !important;
+  left: max(24px, 3.3%) !important;
+  right: auto !important;
+  width: 34vw !important;
+  max-width: 520px;
+  height: 130px !important;
+  background-position: left bottom !important;
+  background-size: contain !important;
+  z-index: 3;
+  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.45));
+}
+
+.itemDetailPage .detailPageWrapperContainer {
+  margin-top: -220px !important;
+  position: relative;
+  z-index: 2;
+}
+.itemDetailPage .detailPagePrimaryContainer {
+  display: block !important;
+  background: transparent !important;
+  padding-left: 3.3% !important;
+  padding-left: max(24px, 3.3%) !important;
+  padding-right: 3.3% !important;
+  padding-right: max(24px, 3.3%) !important;
+}
+.itemDetailPage .detailImageContainer { display: none !important; }
+
+.itemDetailPage .detailRibbon {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start !important;
+  background: transparent !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.itemDetailPage .infoWrapper { padding: 0 !important; width: 100%; }
+
+.itemDetailPage .nameContainer { margin: 0 0 6px !important; text-align: left !important; }
+.itemDetailPage .itemName {
+  font-size: 34px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em;
+  line-height: 1.1 !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  margin: 0 !important;
+}
+.itemDetailPage .itemName.subtitle,
+.itemDetailPage .itemName.infoText { padding-left: 0 !important; margin-left: 0 !important; }
+.itemDetailPage .itemName.subtitle { font-size: 28px !important; }
+.itemDetailPage .parentName { font-size: 18px !important; font-weight: 600 !important; margin: 0 0 2px !important; }
+.itemDetailPage .parentName .button-link { color: rgba(255, 255, 255, 0.86) !important; }
+.itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .parentName { display: none !important; }
+
+.itemDetailPage .itemMiscInfo {
+  justify-content: flex-start !important;
+  font-size: 15px !important;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82) !important;
+  margin: 2px 0 !important;
+}
+.itemDetailPage .itemMiscInfo .mediaInfoItem { margin-right: 0 !important; }
+.itemDetailPage .itemMiscInfo .mediaInfoItem + .mediaInfoItem:not(.mediaInfoCriticRating):not(.mediaInfoOfficialRating)::before {
+  content: "·";
+  margin: 0 0.45em;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+}
+.mediaInfoOfficialRating {
+  border: 1.5px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 4px !important;
+  padding: 0 4px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 15px;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+.itemDetailPage .itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating::before,
+.itemDetailPage .itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating + .mediaInfoItem::before { content: none !important; }
+.itemDetailPage .itemMiscInfo .mediaInfoOfficialRating { margin-left: 0.6em !important; margin-right: 0.6em !important; }
+.itemDetailPage .itemMiscInfo .mediaInfoCriticRating { margin-left: 0.7em !important; }
+.starIcon { color: #ffd60a !important; }
+
+/* Play = white pill, everything else = glass circles */
+.itemDetailPage .mainDetailButtons {
+  margin: 18px 0 6px !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start !important;
+}
+.itemDetailPage .mainDetailButtons .detailButton + .detailButton { margin-left: 14px !important; }
+.itemDetailPage .mainDetailButtons .detailButton {
+  margin: 0 !important;
+  width: 48px;
+  height: 48px;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow) !important;
+  color: #fff !important;
+  transition: transform 0.25s var(--jtv-ease), background-color 0.25s;
+}
+.itemDetailPage .mainDetailButtons .detailButton:hover { background: var(--jtv-glass-hover) !important; transform: scale(1.05); }
+.itemDetailPage .mainDetailButtons .detailButton-content { padding: 0 !important; display: flex; flex-direction: row !important; align-items: center; justify-content: center; height: 100%; }
+.itemDetailPage .mainDetailButtons .detailButton-icon { font-size: 24px !important; }
+.itemDetailPage .mainDetailButtons .btnPlay {
+  width: auto;
+  min-width: 190px;
+  height: 52px;
+  padding: 0 34px 0 28px !important;
+  background: #fff !important;
+  color: #000 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+}
+.itemDetailPage .mainDetailButtons .btnPlay:hover { background: #ececf0 !important; transform: scale(1.03); }
+.itemDetailPage .mainDetailButtons .btnPlay .detailButton-icon { font-size: 32px !important; }
+.itemDetailPage .mainDetailButtons .btnPlay .detailButton-content::after {
+  content: "Play";
+  margin-left: 8px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.itemDetailPage .mainDetailButtons .detailButton-text { display: none !important; }
+.layout-tv .itemDetailPage .mainDetailButtons .detailButton:focus {
+  background: #fff !important;
+  color: #000 !important;
+  transform: scale(1.12);
+}
+
+.itemDetailPage .detailPagePrimaryContent { background: transparent !important; }
+
+/* logo art replaces the plain-text title (desktop browsers with :has) */
+.itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .itemName.parentNameLast {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Cast & Crew: circular portraits, centered captions (Apple TV) */
+#castCollapsible .card,
+#guestCastCollapsible .card { width: 132px !important; }
+#castCollapsible .cardPadder,
+#guestCastCollapsible .cardPadder { padding-bottom: 100% !important; }
+#castCollapsible .cardScalable,
+#guestCastCollapsible .cardScalable { border-radius: 50% !important; }
+#castCollapsible .cardText,
+#guestCastCollapsible .cardText { text-align: center !important; padding-left: 0 !important; }
+#castCollapsible .cardText-first,
+#guestCastCollapsible .cardText-first { margin-top: 6px; font-size: 13px !important; }
+#castCollapsible .cardText-secondary,
+#guestCastCollapsible .cardText-secondary { font-size: 12px !important; }
+.itemDetailPage .detailPagePrimaryContent { padding-left: 0 !important; }
+.itemDetailPage .detailSectionContent { max-width: 760px; }
+.itemDetailPage .tagline {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  margin: 10px 0 4px !important;
+}
+.itemDetailPage .overview {
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+.itemDetailPage .itemTags,
+.itemDetailPage .itemExternalLinks,
+.itemDetailPage .itemGenres { font-size: 13px !important; color: var(--jtv-label-2) !important; }
+.itemDetailPage .button-link,
+.itemDetailPage .itemTags .button-link,
+.itemDetailPage .itemExternalLinks .button-link { color: rgba(255, 255, 255, 0.86) !important; font-weight: 500 !important; }
+.itemDetailPage .itemDetailsGroup .label,
+.itemDetailPage .detailsGroupItem .label { color: var(--jtv-label-2) !important; font-size: 14px; }
+
+.itemDetailPage .trackSelections .selectLabel { font-size: 13px !important; font-weight: 600; }
+.itemDetailPage .trackSelections .detailTrackSelect {
+  background: transparent !important;
+  font-size: 13px !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.itemDetailPage .listItem {
+  border-radius: 12px !important;
+  background: transparent !important;
+  transition: background-color 0.2s;
+}
+.itemDetailPage .listItem:hover { background: rgba(255, 255, 255, 0.05) !important; }
+.listItemImage {
+  border-radius: 10px !important;
+  overflow: hidden;
+  box-shadow: var(--jtv-hairline);
+}
+.listItemBodyText.secondary { color: var(--jtv-label-2) !important; }
+
+/* Season episodes: Apple TV horizontal episode cards
+   (title, synopsis and "▶ 43m" overlaid on a frosted fade) */
+#listChildrenCollapsible .itemsContainer.vertical-list {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px 0 20px !important;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 3.3%;
+  scroll-padding-left: max(24px, 3.3%);
+}
+#listChildrenCollapsible .listItem {
+  flex: 0 0 auto;
+  position: relative;
+  width: 25.5vw;
+  min-width: 280px;
+  max-width: 420px;
+  height: 15.94vw;
+  min-height: 175px;
+  max-height: 262px;
+  margin: 0 22px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: var(--jtv-radius-card) !important;
+  overflow: hidden;
+  background: #1c1c1e !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  scroll-snap-align: start;
+  transition: transform 0.45s var(--jtv-ease), box-shadow 0.45s var(--jtv-ease);
+}
+#listChildrenCollapsible .listItem::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  box-shadow: var(--jtv-hairline);
+  pointer-events: none;
+  z-index: 4;
+}
+.layout-desktop #listChildrenCollapsible .listItem:hover {
+  transform: scale(1.025);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  background: #1c1c1e !important;
+}
+.layout-tv #listChildrenCollapsible .listItem:focus {
+  transform: scale(1.06);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+#listChildrenCollapsible .listItem-content {
+  position: absolute !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#listChildrenCollapsible .listItemImage {
+  position: absolute !important;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+#listChildrenCollapsible .listItemImageButton {
+  width: 54px !important;
+  height: 54px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff !important;
+  top: 38% !important;
+  opacity: 0;
+  z-index: 3;
+  transition: opacity 0.25s var(--jtv-ease);
+}
+#listChildrenCollapsible .listItem:hover .listItemImageButton,
+#listChildrenCollapsible .listItemImageButton:focus { opacity: 1; }
+#listChildrenCollapsible .listItemImageButton .material-icons { font-size: 30px !important; }
+#listChildrenCollapsible .listItemIndicators {
+  top: 10px !important;
+  right: auto !important;
+  left: 10px !important;
+}
+#listChildrenCollapsible .listItemImage .itemProgressBar,
+#listChildrenCollapsible .listItemImage .innerCardFooter {
+  position: absolute !important;
+  left: 0 !important; right: 0 !important; bottom: 0 !important;
+  width: auto !important;
+  height: 3px !important;
+  border-radius: 0 !important;
+  z-index: 3;
+}
+
+#listChildrenCollapsible .listItemBody {
+  position: absolute !important;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-end;
+  max-height: 100%;
+  margin: 0 !important;
+  padding: 64px 16px 13px !important;
+  box-sizing: border-box;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+#listChildrenCollapsible .listItemBody::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.32) 40%, rgba(0, 0, 0, 0.72) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 50%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 50%);
+  pointer-events: none;
+}
+.layout-tv #listChildrenCollapsible .listItemBody::before {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+#listChildrenCollapsible .listItemBodyText {
+  margin: 0 !important;
+  padding: 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#listChildrenCollapsible .listItemBodyText:first-child {
+  order: 1;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  margin-bottom: 2px !important;
+}
+#listChildrenCollapsible .listItem-overview {
+  order: 2;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal !important;
+  font-size: 13.5px !important;
+  line-height: 1.3 !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+#listChildrenCollapsible .listItem-overview p { margin: 0 !important; display: inline; }
+#listChildrenCollapsible .listItemMediaInfo {
+  order: 3;
+  display: flex !important;
+  align-items: center;
+  margin-top: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+#listChildrenCollapsible .listItemMediaInfo::before {
+  content: "\25B6";
+  font-size: 10px;
+  margin-right: 7px;
+}
+#listChildrenCollapsible .listItemMediaInfo .endsAt,
+#listChildrenCollapsible .listItem-bottomoverview { display: none !important; }
+#listChildrenCollapsible .listItemMediaInfo .mediaInfoItem { margin-right: 0.6em !important; }
+
+#listChildrenCollapsible .listViewUserDataButtons {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  display: flex !important;
+  padding: 2px;
+  border-radius: 999px;
+  background: rgba(30, 30, 32, 0.5);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: var(--jtv-glass-rim);
+  opacity: 0;
+  transition: opacity 0.25s var(--jtv-ease);
+}
+#listChildrenCollapsible .listItem:hover .listViewUserDataButtons,
+#listChildrenCollapsible .listViewUserDataButtons:focus-within,
+.layout-tv #listChildrenCollapsible .listViewUserDataButtons,
+.layout-mobile #listChildrenCollapsible .listViewUserDataButtons { opacity: 1; }
+#listChildrenCollapsible .listItemButton {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+}
+#listChildrenCollapsible .listItemButton .material-icons { font-size: 19px !important; }
+
+/* ───────────────────────── Home ───────────────────────── */
+
+#indexPage,
+.homeSectionsContainer { background: var(--jtv-bg) !important; }
+
+/* ───────────────────────── Login ───────────────────────── */
+
+#loginPage {
+  background: radial-gradient(1200px 700px at 50% -10%, #1f2733 0%, #0b0c0f 55%, #000 100%) !important;
+}
+#loginPage form.manualLoginForm,
+#loginPage .visualLoginForm {
+  max-width: 420px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 34px 32px 28px !important;
+  border-radius: 24px;
+  background: var(--jtv-glass-strong);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  box-shadow: var(--jtv-glass-rim), 0 30px 80px rgba(0, 0, 0, 0.55);
+}
+#loginPage h1 {
+  text-align: center;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  margin: 0 0 22px !important;
+  color: #fff !important;
+}
+#loginPage .raised { width: 100%; }
+#loginPage .emby-input { height: 44px; }
+#loginPage .raised:not(.button-submit) {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 12px auto 0 !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim) !important;
+}
+#loginPage .raised.btnForgotPassword {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--jtv-accent-text) !important;
+  font-weight: 500 !important;
+  margin-top: 4px !important;
+}
+
+/* signed out: no tabs, no empty capsules */
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:empty { display: none !important; }
+.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root:has(> a[href="#/"]:only-child) { display: none !important; }
+body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root,
+body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { display: none !important; }
+
+/* ───────────────────────── Video player OSD (Apple TV player) ───────────────────────── */
+
+.videoOsdBottom,
+.skinHeader-withBackground.osdHeader {
+  background: none !important;
+}
+/* no blur on the header itself: it would trap the fixed-position title below */
+.skinHeader.osdHeader {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  contain: none !important;
+  padding-top: 6px;
+}
+
+/* top-left: glass circle back button */
+.osdHeader .headerBackButton {
+  width: 48px !important;
+  height: 48px !important;
+  margin: 12px 0 0 1.2% !important;
+  margin: 12px 0 0 max(14px, 1.2%) !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff !important;
+}
+.osdHeader .headerBackButton .material-icons { font-size: 26px !important; }
+
+/* top-right: SyncPlay / Cast grouped in one capsule, left of the volume capsule */
+.osdHeader .headerRight {
+  margin: 12px 236px 0 0 !important;
+  padding: 0 4px;
+  height: 48px;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+}
+.osdHeader .headerRight .headerButton {
+  width: 42px !important;
+  height: 42px !important;
+  margin: 3px 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+}
+
+/* title sits bottom-left above the scrubber, bold like "Matchbox The Movie" */
+.osdHeader .pageTitle {
+  position: fixed !important;
+  left: 2.4%;
+  left: max(24px, 2.4%);
+  right: 30%;
+  bottom: 146px;
+  margin: 0 !important;
+  font-family: var(--jtv-font-display) !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #fff !important;
+  white-space: normal !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+/* same treatment for the React player toolbar (web 10.10+ experimental layout) */
+.videoOsd-appBar {
+  min-height: 72px !important;
+  padding: 12px 1.2% 0 !important;
+  padding: 12px max(14px, 1.2%) 0 !important;
+  align-items: flex-start !important;
+}
+.videoOsd-appBar > button.MuiIconButton-root {
+  width: 48px;
+  height: 48px;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff !important;
+}
+.videoOsd-appBar > button.MuiIconButton-root:hover { background: var(--jtv-glass-hover) !important; }
+.videoOsd-appBar > .MuiTypography-root {
+  position: fixed !important;
+  left: 2.4%;
+  left: max(24px, 2.4%);
+  right: 30%;
+  bottom: 146px;
+  margin: 0 !important;
+  font-family: var(--jtv-font-display) !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.15 !important;
+  color: #fff !important;
+  white-space: normal !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+.videoOsd-appBar > .MuiBox-root {
+  flex: 0 0 auto !important;
+  margin: 0 236px 0 auto !important;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+}
+.videoOsd-appBar > .MuiBox-root:empty { display: none; }
+.videoOsd-appBar > .MuiBox-root .MuiIconButton-root {
+  width: 42px;
+  height: 42px;
+  padding: 9px !important;
+  color: #fff !important;
+}
+
+.videoOsdBottom .osdTitle:empty { display: none; }
+.videoOsdBottom .osdTitle {
+  font-family: var(--jtv-font-display) !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  color: #fff !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+}
+
+.videoOsdBottom .osdControls {
+  padding: 0 2.4% 22px !important;
+  padding: 0 max(24px, 2.4%) 22px !important;
+}
+
+/* scrubber: thin capsule, white progress on gray, no thumb until hover */
+.videoOsdBottom .osdPositionText,
+.videoOsdBottom .osdDurationText {
+  min-width: 64px;
+  font-size: 13px !important;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.66) !important;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+.videoOsdBottom .osdDurationText { text-align: right; }
+.mdl-slider-background-flex {
+  height: 7px !important;
+  margin-top: -3.5px !important;
+  border-radius: 999px !important;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.24) !important;
+}
+.mdl-slider-background-lower { background: #fff !important; }
+.mdl-slider-background-upper { background: rgba(255, 255, 255, 0.24) !important; }
+.mdl-slider-background-buffered { background: rgba(255, 255, 255, 0.4) !important; }
+.videoOsdBottom .osdPositionSlider::-webkit-slider-thumb { opacity: 0; transition: opacity 0.2s; }
+.videoOsdBottom .sliderContainer:hover .osdPositionSlider::-webkit-slider-thumb { opacity: 1; background: #fff !important; }
+.sliderBubble {
+  background: var(--jtv-glass-strong) !important;
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border-radius: 10px !important;
+  box-shadow: var(--jtv-glass-rim);
+  color: #fff !important;
+}
+
+/* every remaining control → glass circle */
+.videoOsdBottom .buttons {
+  align-items: center;
+  margin-top: 14px;
+  padding: 0 !important;
+}
+.videoOsdBottom .buttons .paper-icon-button-light {
+  width: 46px;
+  height: 46px;
+  padding: 0 !important;
+  margin: 0 4px !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff !important;
+  transition: transform 0.2s var(--jtv-ease), background-color 0.2s;
+}
+.videoOsdBottom .buttons .paper-icon-button-light:hover { background: var(--jtv-glass-hover) !important; transform: scale(1.06); }
+.videoOsdBottom .buttons .material-icons { font-size: 24px !important; }
+.videoOsdBottom .osdTimeText {
+  margin-left: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.66);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* transport cluster floats in the middle of the frame (−10s · play · +10s) */
+.videoOsdBottom .buttons .btnRewind,
+.videoOsdBottom .buttons .btnPause,
+.videoOsdBottom .buttons .btnFastForward {
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  margin: 0 !important;
+}
+.videoOsdBottom .buttons .btnPause {
+  width: 84px !important;
+  height: 84px !important;
+  transform: translate(-50%, -50%);
+}
+.videoOsdBottom .buttons .btnPause:hover { transform: translate(-50%, -50%) scale(1.06); }
+.videoOsdBottom .buttons .btnPause .material-icons { font-size: 50px !important; }
+.videoOsdBottom .buttons .btnRewind,
+.videoOsdBottom .buttons .btnFastForward {
+  width: 60px !important;
+  height: 60px !important;
+}
+.videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 132px), -50%); }
+.videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 132px), -50%); }
+.videoOsdBottom .buttons .btnRewind:hover { transform: translate(calc(-50% - 132px), -50%) scale(1.06); }
+.videoOsdBottom .buttons .btnFastForward:hover { transform: translate(calc(-50% + 132px), -50%) scale(1.06); }
+.videoOsdBottom .buttons .btnRewind .material-icons,
+.videoOsdBottom .buttons .btnFastForward .material-icons { font-size: 32px !important; }
+
+/* volume: top-right capsule with white level on gray track */
+.videoOsdBottom .volumeButtons {
+  position: fixed !important;
+  top: 18px;
+  right: 1.2%;
+  right: max(14px, 1.2%);
+  display: flex;
+  align-items: center;
+  height: 48px;
+  width: 210px;
+  padding: 0 4px 0 18px;
+  flex-direction: row-reverse;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  box-sizing: border-box;
+}
+.videoOsdBottom .volumeButtons .buttonMute {
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 !important;
+}
+.videoOsdBottom .volumeButtons .osdVolumeSliderContainer { flex: 1 1 auto; width: auto !important; margin: 0 6px 0 0; }
+.videoOsdBottom .volumeButtons .osdVolumeSlider::-webkit-slider-thumb { opacity: 0; }
+
+.layout-tv .videoOsdBottom .buttons .paper-icon-button-light:focus,
+.layout-tv .osdHeader .headerButton:focus {
+  background: #fff !important;
+  color: #000 !important;
+}
+.layout-tv .videoOsdBottom .buttons .btnPause:focus { transform: translate(-50%, -50%) scale(1.1); }
+.layout-tv .videoOsdBottom .buttons .btnRewind:focus { transform: translate(calc(-50% - 132px), -50%) scale(1.1); }
+.layout-tv .videoOsdBottom .buttons .btnFastForward:focus { transform: translate(calc(-50% + 132px), -50%) scale(1.1); }
+
+/* skip-intro / up-next prompts */
+.upNextContainer,
+.skip-button,
+.skipIntro button {
+  background: var(--jtv-glass-strong) !important;
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  border-radius: 16px !important;
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow) !important;
+  color: #fff !important;
+}
+
+/* ───────────────────────── Now-playing bar ───────────────────────── */
+
+.nowPlayingBar {
+  background: var(--jtv-glass-strong) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ───────────────────────── Dashboard ───────────────────────── */
+
+.MuiPaper-root.MuiCard-root,
+.paperList {
+  background: #1c1c1e !important;
+  border-radius: 14px !important;
+  box-shadow: var(--jtv-hairline) !important;
+}
+
+/* ───────────────────────── Phones ───────────────────────── */
+
+/* hamburger (shown when the tab pill collapses) → glass circle */
+.MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root {
+  width: 46px;
+  height: 46px;
+  margin-right: auto !important;
+  margin-left: 150px !important;
+  border-radius: 999px !important;
+  background: var(--jtv-glass) !important;
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff !important;
+}
+
+@media (max-width: 600px) {
+  .MuiAppBar-root > .MuiToolbar-root:first-child::before { font-size: 21px; left: 16px; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { margin-left: 112px !important; width: 42px; height: 42px; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { height: 44px; margin-left: 6px; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child { width: 44px; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root { width: 38px; height: 38px; padding: 8px !important; }
+  .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 { font-size: 26px !important; }
+  .itemDetailPage .itemBackdrop { height: 64vh !important; }
+  .itemDetailPage .detailLogo { top: calc(64vh - 330px) !important; width: 70vw !important; height: 96px !important; }
+  .itemDetailPage .itemName { font-size: 28px !important; }
+  .itemDetailPage .mainDetailButtons { flex-wrap: wrap; }
+  .itemDetailPage .mainDetailButtons .btnPlay { min-width: 0; flex: 1 0 100%; }
+  #listChildrenCollapsible .listItem { width: 78vw; height: 48.75vw; }
+  .videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 96px), -50%); }
+  .videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 96px), -50%); }
+  .videoOsd-appBar > .MuiTypography-root,
+  .osdHeader .pageTitle { font-size: 22px !important; right: 16px; }
+  .videoOsd-appBar > .MuiBox-root { margin-right: 0 !important; }
+  .videoOsdBottom .volumeButtons { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardScalable, .cardBox, .detailButton, #listChildrenCollapsible .listItem { transition: none !important; }
+}
