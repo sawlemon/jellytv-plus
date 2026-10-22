@@ -19,6 +19,8 @@ desktop/phone and the legacy layout on TVs).
 | ![TV](screenshots/after/tv-layout.jpg) | ![Phone](screenshots/after/phone-sidebar.jpg) |
 | **iPhone home (tab bar)** | **iPhone season** |
 | ![iPhone home](screenshots/after/iphone-home.jpg) | ![iPhone season](screenshots/after/iphone-season.jpg) |
+| **iPad (mobile layout)** | **iPad portrait / iPhone movie** |
+| ![iPad show](screenshots/after/ipad-show.jpg) | ![iPad portrait](screenshots/after/ipad-portrait-movie.jpg) ![iPhone movie](screenshots/after/iphone-movie.jpg) |
 
 ## What it changes
 

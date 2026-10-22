@@ -963,6 +963,8 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 .itemDetailPage .infoWrapper { padding: 0 !important; width: 100%; }
 
 .itemDetailPage .nameContainer { margin: 0 0 6px !important; text-align: left !important; }
+.itemDetailPage .itemName,
+.itemDetailPage .parentName { text-align: inherit !important; }
 .itemDetailPage .itemName {
   font-size: 34px !important;
   font-weight: 700 !important;
@@ -1011,6 +1013,8 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 /* Play = white pill, everything else = glass circles */
 .itemDetailPage .mainDetailButtons {
   margin: 18px 0 6px !important;
+  padding-left: 0 !important;  /* mobile layout indents this row for a poster the theme hides */
+  padding-right: 0 !important;
   display: flex;
   align-items: center;
   justify-content: flex-start !important;
