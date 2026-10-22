@@ -10,7 +10,7 @@ entry named "Jelly TV+" is created or replaced (other scripts are left alone).
 Usage:
   JELLYFIN_TOKEN=... python3 scripts/deploy.py --server http://host:8096 --dry-run
   python3 scripts/deploy.py --server http://host:8096 --token-file ~/.jellyfin-token \
-      --override overrides/hplaptop.css
+      --override overrides/samsung-tv.css
 
 The token must belong to an administrator (an API key from Dashboard → API Keys works).
 """

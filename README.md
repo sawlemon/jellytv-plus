@@ -1,125 +1,134 @@
 # Jelly TV+
 
-A custom-CSS theme that makes the Jellyfin web client look and behave like the Apple TV app
-(macOS / iPadOS 26): a floating Liquid Glass tab bar, smoked-glass controls, full-bleed heroes
-with title art, frosted metadata inside landscape tiles, Mac-style episode rows, and the iPad
-player layout. The header wordmark reads **Jelly TV+** in Apple's system font.
+Make your Jellyfin server look and feel like the Apple TV app.
 
-Built and tested against **Jellyfin 12.2** (web client with the MUI "experimental" layout on
-desktop/phone and the legacy layout on TVs).
+Jelly TV+ is a free theme for [Jellyfin](https://jellyfin.org). It changes how Jellyfin looks
+in a web browser, on iPhone and iPad, and on TV apps that use Jellyfin's web interface (like the
+Samsung TV app). Your movies and shows stay exactly the same; only the look changes.
 
-| Home (hero carousel) | iPhone home |
+Made for **Jellyfin 12.2**. It may need small fixes on other versions.
+
+| Home | iPhone |
 | --- | --- |
-| ![Home hero](screenshots/after/home-hero.jpg) | ![iPhone hero](screenshots/after/iphone-home-hero.jpg) |
-| **Home rows** | **Movie** |
-| ![Home](screenshots/after/home.jpg) | ![Movie](screenshots/after/movie-detail.jpg) |
-| **Season / episodes** | **Library** |
-| ![Season](screenshots/after/season-episodes.jpg) | ![Library](screenshots/after/library.jpg) |
-| **Player** | **Sign in** |
-| ![Player](screenshots/after/player.jpg) | ![Sign in](screenshots/after/sign-in.jpg) |
-| **TV layout (focus)** | **Phone sidebar** |
-| ![TV](screenshots/after/tv-layout.jpg) | ![Phone](screenshots/after/phone-sidebar.jpg) |
-| **iPhone home (tab bar)** | **iPhone season** |
-| ![iPhone home](screenshots/after/iphone-home.jpg) | ![iPhone season](screenshots/after/iphone-season.jpg) |
-| **iPad (mobile layout)** | **iPad portrait / iPhone movie** |
-| ![iPad show](screenshots/after/ipad-show.jpg) | ![iPad portrait](screenshots/after/ipad-portrait-movie.jpg) ![iPhone movie](screenshots/after/iphone-movie.jpg) |
+| ![Home screen with a large rotating banner](screenshots/after/home-hero.jpg) | ![iPhone home screen](screenshots/after/iphone-home-hero.jpg) |
+| **Movie page** | **Episodes** |
+| ![Movie page](screenshots/after/movie-detail.jpg) | ![Episode row](screenshots/after/season-episodes.jpg) |
+| **Library** | **Video player** |
+| ![Movie library](screenshots/after/library.jpg) | ![Video player](screenshots/after/player.jpg) |
+| **iPad** | **Sign in** |
+| ![iPad show page](screenshots/after/ipad-show.jpg) | ![Sign-in page](screenshots/after/sign-in.jpg) |
+| **TV** | **iPhone menu bar** |
+| ![TV layout](screenshots/after/tv-layout.jpg) | ![iPhone bottom menu](screenshots/after/iphone-home.jpg) |
 
-## What it changes
+## What you get
 
-- **Home hero carousel** (`jellytv-plus.js`) – the Apple TV hero: the most recently added
-  movies and shows with backdrop art, full-bleed under the floating tab pill, with title logo,
-  "New" badge (added in the last 21 days), `Movie · Genre · Genre [rating]`, overview, year and
-  runtime, a white **Play / Resume** pill (series say "Play S1, E3"), a glass **+** that toggles
-  Favorite, and pill page dots that fill over the 8 s slide interval. Swipe on touch screens.
-  Below it: Continue Watching, then Recently Added. The "My Media" library tiles are hidden.
+- **A big rotating banner on the Home screen** showing your newest movies and shows, with the
+  title logo, a short description and a white **Play** button. It changes every few seconds;
+  you can also tap the dots or swipe. Under it: *Continue Watching*, then *Recently Added*.
+- **"Jelly TV+" at the top** instead of the Jellyfin logo, in Apple's own font on Apple devices.
+- **See-through "glass" buttons and menus**, like the newest Apple designs.
+- **A floating menu bar** (Home, Favorites, Movies, Shows…) at the top on computers and iPads,
+  and at the bottom on iPhones.
+- **Movie and show pages** with full-screen artwork, the title logo, and a white Play button.
+- **Episodes shown as a row of picture cards**, like the Apple TV app.
+- **A cleaner video player** with big round buttons in the middle of the screen.
+- **Round cast photos**, rounded posters, and smooth hover and focus effects.
 
-- **Header** – "Jelly TV+" wordmark; library links become a centered glass tab pill with the
-  active tab in blue on a darker capsule (iPad Apple TV); SyncPlay/Cast/Search grouped in a glass
-  capsule; avatar in a glass circle; progressive scroll-edge blur behind it.
-- **Glass** – one smoked tint (`--jtv-glass`) with blur, saturation, a specular rim and soft
-  shadow, used for every floating control. Tuned to ~#262626 over black (Apple's measures ~#292929)
-  while staying legible over bright video.
-- **Cards** – 12 px radius with a hairline rim; landscape tiles carry title/subtitle inside the
-  artwork over a frosted fade, with Apple's `▶ ━━ 1982` resume row; posters get left-aligned
-  captions; hover lift on desktop, tvOS-style focus lift on TVs.
-- **Detail pages** – full-bleed backdrop hero, logo art bottom-left (plain title hidden when a
-  logo exists), `·`-separated metadata with outlined rating badge, white **Play** pill + glass
-  circle actions; black hero flowing into the Mac's `#1d1d1e` content canvas; circular cast
-  portraits.
-- **Seasons** – the episode list becomes a horizontal row of 16:9 cards with title, two-line
-  synopsis and `▶ 28m` over a frosted fade (Mac "Season 1" row).
-- **Player** – glass back circle, SyncPlay/Cast capsule and volume capsule up top, centered
-  rewind / play / fast-forward glass cluster, bold title bottom-left above a thin white-on-gray
-  scrubber, remaining controls as glass circles.
-- **Sidebar, menus, dialogs, sign-in** – glass panels with blue icons and macOS menu highlighting.
-- **iPhone (≤600 px)** – the navigation drawer becomes the iOS 26 floating glass tab bar (icons
-  over labels, selected tab blue on a darker capsule); "Jelly TV+" large title on Home with the
-  avatar top-right; centered detail hero (logo, metadata, Play pill + ✓ on one row, other actions
-  centered below); taller episode cards; Continue Watching tiles with the next one peeking in;
-  portrait player with a volume circle and Apple's control spacing.
-- **Backdrops on iPhone/iPad** – Jellyfin's mobile layout puts the backdrop on the page's own
-  banner (`#itemBackdrop`) instead of the global backdrop layer; the theme styles that banner as
-  the hero. When Jellyfin loads no backdrop at all (desktop layout narrower than 1000 px) a blurred
-  poster stands in.
+## How to install
 
-## Install
+There are two parts:
 
-The look is pure CSS; the home hero carousel is JavaScript and needs the
-[JavaScript Injector](https://github.com/n00bcodr/Jellyfin-JavaScript-Injector) plugin
-(Jellyfin 12 repo: `https://raw.githubusercontent.com/n00bcodr/jellyfin-plugins/main/12/manifest.json`).
-Without the plugin everything else still works and Home simply starts with Continue Watching.
+1. **The look** (colors, buttons, layout). This is the file `jellytv-plus.css`.
+2. **The Home screen banner**. This is the file `jellytv-plus.js`. It needs one free plugin.
 
-**Paste:** Dashboard → General → Custom CSS, paste the contents of `jellytv-plus.css`, save,
-reload clients.
+You can install just part 1 if you like. Everything works without part 2; the Home screen
+simply starts with *Continue Watching* instead of the banner.
 
-**Script (keeps a backup, verifies the write):**
+### Part 1: the look (2 minutes)
+
+1. Open Jellyfin and sign in as an administrator.
+2. Go to **Dashboard → General**.
+3. Find the box called **Custom CSS**.
+4. Open `jellytv-plus.css` from this project, copy everything in it, and paste it into that box.
+5. Click **Save**, then refresh the page.
+
+### Part 2: the Home screen banner
+
+1. In Jellyfin, go to **Dashboard → Plugins → Repositories** and add the plugin address for
+   your Jellyfin version, from the
+   [JavaScript Injector page](https://github.com/n00bcodr/Jellyfin-JavaScript-Injector).
+   For Jellyfin 12 it is:
+   `https://raw.githubusercontent.com/n00bcodr/jellyfin-plugins/main/12/manifest.json`
+2. Go to **Dashboard → Plugins → Catalog**, install **JavaScript Injector**, then restart Jellyfin.
+3. Open the plugin's settings, add a new script named **Jelly TV+**, paste in everything from
+   `jellytv-plus.js`, and save.
+4. Refresh the Jellyfin page. If the banner does not appear, see *Troubleshooting* below.
+
+### Optional: install or update with one command
+
+If you are comfortable with a terminal, `scripts/deploy.py` does both parts for you. It saves a
+backup of your current settings first and checks that everything was saved correctly. It only
+needs Python 3, nothing else.
+
+1. In Jellyfin, go to **Dashboard → API Keys** and create a new key.
+2. Save that key in a file on your computer, for example `~/.jellyfin-token`. Keep this file
+   private and never share it or commit it to Git.
+3. Run (replace the address with your server's address):
 
 ```sh
-# dry run first
-JELLYFIN_TOKEN=<admin api key> python3 scripts/deploy.py --server http://<host>:8096 --dry-run
-# deploy, appending any server-specific overrides
-python3 scripts/deploy.py --server http://<host>:8096 --token-file ~/.jellyfin-token \
-    --override overrides/hplaptop.css
+# Preview what would change. Nothing is saved.
+python3 scripts/deploy.py --server http://YOUR-SERVER:8096 --token-file ~/.jellyfin-token --dry-run
+
+# Install or update
+python3 scripts/deploy.py --server http://YOUR-SERVER:8096 --token-file ~/.jellyfin-token
 ```
 
-`deploy.py` uses only the Python standard library and deploys both pieces: the CSS into
-branding, and `jellytv-plus.js` as a script entry named "Jelly TV+" in JavaScript Injector
-(skipped if the plugin isn't installed; `--skip-js` to opt out). It reads the current branding config, writes
-a timestamped backup to `backups/` (git-ignored), replaces only `CustomCss`, and reads it back to
-confirm. Restore by POSTing a backup JSON to `/System/Configuration/branding`.
+Backups go into a `backups` folder, which Git ignores.
 
-## Fonts
+## Samsung TVs
 
-Apple devices render the real **SF Pro** through the `-apple-system` stack. SF Pro can't be
-redistributed, so other platforms (Windows, Android, Tizen, webOS) fall back to **Inter**, which
-is loaded from Google Fonts and is the closest freely licensed match.
+The theme also works in the Samsung (Tizen) Jellyfin app, with a few differences:
 
-## Compatibility notes
+- **Fully close and reopen the app** after installing or updating the theme. TVs often keep
+  apps paused in the background, so the old look can stay until the app really restarts.
+- **Turn on artwork:** in the TV app, go to **Settings → Display → Backdrops**. Without it, movie
+  pages have no background picture.
+- **No Home screen banner on TVs.** The TV app has its own built-in copy of Jellyfin's interface,
+  so it never loads the banner script. TVs show the normal rows instead.
+- If you see gray bars around videos on a Samsung TV, add the small fix in
+  `overrides/samsung-tv.css` to the end of your Custom CSS. With the command above, add
+  `--override overrides/samsung-tv.css`.
 
-- TVs (`html.layout-tv`) get the same look without `backdrop-filter` (too expensive on Tizen/webOS)
-  and with denser fills instead.
-- Rules that must work on Tizen 6 (Chromium 76) avoid `:is()`, `:where()`, `aspect-ratio`,
-  `inset` and flex `gap`; every `max()`/`min()` has a plain fallback declared first.
-- `:has()` is used only for desktop refinements (hiding the duplicate title under logo art,
-  the Home tab highlight, hiding header chrome when signed out). Browsers without it skip those.
-- The theme targets stable `Mui*` component classes and legacy Jellyfin classes, never the
-  hashed `css-*` ones, so it should survive minor web-client updates.
+## Troubleshooting
 
-## Gotcha: stale index.html after installing JavaScript Injector
-
-The injector adds its `<script>` to `index.html` on the fly, but Jellyfin still answers
-`If-Modified-Since` revalidations with `304` based on the file's original timestamp, so browsers
-that cached the page earlier keep the copy without the script. Bump the file's mtime once after
-installing the plugin (or after a Jellyfin update):
+**The Home banner does not show up after installing the plugin.**
+Your browser may still be using an old copy of Jellyfin's start page. If Jellyfin runs in
+Docker, run this once on the server and then refresh the page:
 
 ```sh
 docker exec jellyfin touch /jellyfin/jellyfin-web/index.html
 ```
 
-## Limitations
+You may need to run it again after updating Jellyfin.
 
-- The browser tab title still says "Jellyfin".
-- The hero carousel is not shown on TV layouts (Tizen/webOS remote navigation); TVs keep the
-  standard rows.
-- Material icons stay Material icons (no SF Symbols); they are recolored and resized to sit
-  naturally in the glass controls.
+**I changed the theme but my device still shows the old look.**
+Refresh the page. On phones, tablets and TVs, close the app completely and open it again.
+
+**I want my old look back.**
+Delete everything in **Dashboard → General → Custom CSS**, and turn off or delete the
+**Jelly TV+** script in the JavaScript Injector settings.
+
+## Good to know
+
+- **Fonts:** Apple devices show Apple's own font (SF Pro). Other devices use **Inter**, a very
+  similar free font, loaded from Google Fonts.
+- **Icons:** the icons are Jellyfin's own, recolored to match. Apple's icons cannot be used here.
+- **Browser tab:** the browser tab title still says "Jellyfin".
+- **Updates:** a big Jellyfin update can move things around. If something looks wrong after an
+  update, please open an issue.
+
+## Disclaimer
+
+Jelly TV+ is a fan-made theme. It is not made by, supported by, or connected to Apple or the
+Jellyfin project. "Apple TV" is a trademark of Apple Inc. Movie posters and pictures in the
+screenshots belong to their owners and are shown only to demonstrate the theme.
