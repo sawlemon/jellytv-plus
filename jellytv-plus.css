@@ -876,7 +876,11 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 .itemDetailPage .itemBackdrop {
   height: 82vh !important;
   min-height: 460px;
-  background: none !important;
+  /* filled by Jellyfin only on mobile layout (iPhone/iPad Safari); otherwise empty */
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center 18% !important;
+  background-repeat: no-repeat !important;
   margin-top: 0 !important;
   position: relative;
 }
@@ -911,6 +915,9 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 }
 .playstatebutton-icon-played,
 .itemDetailPage .mainDetailButtons .playstatebutton-icon-played { color: #fff !important; }
+
+/* Jellyfin hides .detailLogo on mobile/TV layouts; the theme always shows it when one exists */
+.itemDetailPage .detailLogo:not(.hide) { display: block !important; }
 
 /* title art goes bottom-left like Apple TV */
 .itemDetailPage .detailLogo {
@@ -1685,25 +1692,249 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   color: #fff !important;
 }
 
+/* list rows (library "List" view, Top-10 style): inset hairline separators */
+.vertical-list .listItem { border-bottom: 0 !important; }
+.vertical-list .listItem .listItemBody { border-bottom: 0.5px solid var(--jtv-separator); }
+#listChildrenCollapsible .listItem .listItemBody { border-bottom: 0; }
+
+/* Below 1000px Jellyfin drops the backdrop layer, so the (hidden) poster becomes a
+   full-bleed portrait hero — the iPhone/iPad-portrait Apple TV look. */
+@media (max-width: 999px) {
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer {
+    display: block !important;
+    position: absolute !important;
+    left: 0; right: 0;
+    top: calc(220px - 82vh);
+    height: 82vh;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .card,
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardBox,
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardScalable {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    max-width: none !important;
+    -webkit-filter: none !important;
+    filter: none !important;
+  }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .card {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: auto !important;
+  }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardPadder { display: none !important; }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardImageContainer,
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardContent {
+    position: absolute !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 0 !important;
+    background-size: cover !important;
+    background-position: center 20% !important;
+  }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardImageContainer {
+    filter: blur(28px) saturate(140%);
+    transform: scale(1.25);
+  }
+  .itemDetailPage:has(#itemBackdrop[style*="url("]) .detailPagePrimaryContainer > .detailImageContainer { display: none !important; }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardScalable::after {
+    box-shadow: none;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 22%, rgba(0, 0, 0, 0) 48%, rgba(0, 0, 0, 0.6) 76%, #000 100%);
+  }
+}
+
+/* ── iPhone (references: iOS 26 Apple TV app) ── */
 @media (max-width: 600px) {
-  .MuiAppBar-root > .MuiToolbar-root:first-child::before { font-size: 21px; left: 16px; }
-  .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { margin-left: 112px !important; width: 42px; height: 42px; }
+  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer { top: calc(220px - 72vh); height: 72vh; }
+  /* header: large title on Home, compact wordmark elsewhere, avatar right */
+  .MuiAppBar-root > .MuiToolbar-root:first-child { min-height: 64px !important; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child::before {
+    left: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  body:has(#indexPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child { min-height: 84px !important; }
+  body:has(#indexPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child::before {
+    font-size: 34px;
+    letter-spacing: -0.025em;
+  }
   .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { height: 44px; margin-left: 6px; }
-  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child { width: 44px; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child {
+    width: 46px;
+    height: 46px;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .MuiAppBar-root .MuiAvatar-root { width: 42px !important; height: 42px !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18); }
   .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root { width: 38px; height: 38px; padding: 8px !important; }
-  .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 { font-size: 26px !important; }
-  .itemDetailPage .itemBackdrop { height: 64vh !important; }
-  .itemDetailPage .detailLogo { top: calc(64vh - 330px) !important; width: 70vw !important; height: 96px !important; }
+  .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 { font-size: 28px !important; }
+  .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { margin-left: 112px !important; width: 42px; height: 42px; }
+
+  /* floating Liquid Glass tab bar built from the (always-mounted) navigation drawer */
+  body:has(.MuiDrawer-modal a[href="#/home"]) .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { display: none !important; }
+  .MuiDrawer-modal:has(a[href="#/home"]) {
+    visibility: visible !important;
+    top: auto !important;
+    bottom: 0 !important;
+    height: 0 !important;
+    pointer-events: none;
+  }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiBackdrop-root { display: none !important; }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper {
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto;
+    position: fixed !important;
+    top: auto !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) * 0.55 + 10px) !important;
+    width: auto !important;
+    height: 64px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch;
+    padding: 4px !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--jtv-glass) !important;
+    -webkit-backdrop-filter: var(--jtv-glass-filter);
+    backdrop-filter: var(--jtv-glass-filter);
+    box-shadow: var(--jtv-glass-rim), 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+  }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper > .MuiBox-root,
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiList-root,
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItem-root { display: contents !important; }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiDivider-root,
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListSubheader-root,
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root[href="#/"] { display: none !important; }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px;
+    margin: 0 !important;
+    padding: 4px 2px !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+    background: transparent !important;
+  }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root.Mui-selected {
+    background: rgba(0, 0, 0, 0.36) !important;
+    color: var(--jtv-accent-text) !important;
+  }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemIcon-root {
+    min-width: 0 !important;
+    justify-content: center;
+    color: inherit !important;
+  }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemIcon-root svg { font-size: 27px !important; }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemText-root { margin: 0 !important; flex: 0 0 auto; max-width: 100%; }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemText-primary {
+    display: block;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: inherit !important;
+  }
+  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiTouchRipple-root { display: none; }
+  body:has(#videoOsdPage:not(.hide)) .MuiDrawer-modal,
+  body:has(#loginPage:not(.hide)) .MuiDrawer-modal { display: none !important; }
+  /* keep content clear of the tab bar */
+  .mainAnimatedPage:not(#videoOsdPage) { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+
+  /* cards: Continue Watching tiles with the next one peeking in */
+  .overflowBackdropCard { width: 68vw !important; }
+  .emby-scrollbuttons { display: none !important; }
+  .sectionTitle, .sectionTitle-cards, .sectionTitleTextButton { font-size: 22px !important; }
+
+  /* detail: centered hero like iOS (logo, meta, Play pill + circles) */
+  .itemDetailPage .itemBackdrop { height: 72vh !important; min-height: 420px; }
+  .itemDetailPage .itemBackdrop::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 38%, rgba(0, 0, 0, 0.55) 70%, #000 100%);
+  }
+  .itemDetailPage .detailLogo {
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 auto;
+    top: calc(72vh - 330px) !important;
+    width: 74vw !important;
+    height: 100px !important;
+    background-position: center bottom !important;
+  }
+  .itemDetailPage .detailPagePrimaryContainer { padding-left: 20px !important; padding-right: 20px !important; }
+  .itemDetailPage .detailRibbon { align-items: center !important; }
+  .itemDetailPage .nameContainer { text-align: center !important; }
   .itemDetailPage .itemName { font-size: 28px !important; }
-  .itemDetailPage .mainDetailButtons { flex-wrap: wrap; }
-  .itemDetailPage .mainDetailButtons .btnPlay { min-width: 0; flex: 1 0 100%; }
-  #listChildrenCollapsible .listItem { width: 78vw; height: 48.75vw; }
-  .videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 96px), -50%); }
-  .videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 96px), -50%); }
+  .itemDetailPage .itemMiscInfo { justify-content: center !important; flex-wrap: wrap; }
+  .itemDetailPage .mainDetailButtons {
+    justify-content: center !important;
+    flex-wrap: wrap;
+    margin: 16px 0 4px !important;
+  }
+  .itemDetailPage .mainDetailButtons .detailButton { width: 46px; height: 46px; order: 2; }
+  .itemDetailPage .mainDetailButtons .detailButton + .detailButton,
+  .itemDetailPage .mainDetailButtons .detailButton.emby-button { margin: 5px !important; }
+  /* row 1 = Play pill + ✓ (Apple's Resume + watchlist), the rest centered underneath */
+  .itemDetailPage .mainDetailButtons .btnPlay { order: 0; width: calc(100% - 66px); min-width: 0; height: 50px; padding: 0 !important; }
+  .itemDetailPage .mainDetailButtons .btnPlaystate { order: 1; }
+  #listChildrenCollapsible .itemsContainer { scrollbar-width: none; }
+  #listChildrenCollapsible .itemsContainer::-webkit-scrollbar { display: none; }
+  .itemDetailPage .detailPagePrimaryContent { padding-left: 20px !important; padding-right: 20px !important; }
+  .itemDetailPage .overview { font-size: 16px !important; }
+
+  /* season row: tall iOS episode cards */
+  #listChildrenCollapsible .listItem { width: 66vw; min-width: 0; height: 60vw; margin-right: 14px !important; }
+  #listChildrenCollapsible .listItemBody { padding: 48px 14px 12px !important; }
+  #listChildrenCollapsible .listItem-overview { -webkit-line-clamp: 3; }
+
+  /* list rows: Top-10 layout (poster, title, gray genre) */
+  .vertical-list .listItem .listItemImage { border-radius: 10px !important; }
+  .vertical-list .listItemBodyText:first-child { font-size: 17px !important; }
+
+  /* player, portrait iPhone */
+  .videoOsd-appBar > .MuiBox-root { margin-right: 60px !important; }
   .videoOsd-appBar > .MuiTypography-root,
-  .osdHeader .pageTitle { font-size: 22px !important; right: 16px; }
-  .videoOsd-appBar > .MuiBox-root { margin-right: 0 !important; }
-  .videoOsdBottom .volumeButtons { display: none !important; }
+  .osdHeader .pageTitle { font-size: 22px !important; right: 20px; left: 20px; bottom: 150px; }
+  .videoOsdBottom .volumeButtons {
+    display: flex !important;
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+    right: 14px;
+  }
+  .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { display: none !important; }
+  .videoOsdBottom .buttons .btnPause { width: 84px !important; height: 84px !important; }
+  .videoOsdBottom .buttons .btnRewind,
+  .videoOsdBottom .buttons .btnFastForward { width: 58px !important; height: 58px !important; }
+  .videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 106px), -50%); }
+  .videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 106px), -50%); }
+  .videoOsdBottom .buttons .btnRewind:hover { transform: translate(calc(-50% - 106px), -50%) scale(1.06); }
+  .videoOsdBottom .buttons .btnFastForward:hover { transform: translate(calc(-50% + 106px), -50%) scale(1.06); }
+  .videoOsdBottom .osdTimeText { display: none !important; }
+  .videoOsdBottom .buttons { justify-content: space-between; }
+  .videoOsdBottom .buttons .paper-icon-button-light { width: 42px; height: 42px; margin: 0 2px !important; }
+  .videoOsdBottom .osdControls { padding: 0 20px calc(18px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

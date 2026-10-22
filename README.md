@@ -17,6 +17,8 @@ desktop/phone and the legacy layout on TVs).
 | ![Player](screenshots/after/player.jpg) | ![Sign in](screenshots/after/sign-in.jpg) |
 | **TV layout (focus)** | **Phone sidebar** |
 | ![TV](screenshots/after/tv-layout.jpg) | ![Phone](screenshots/after/phone-sidebar.jpg) |
+| **iPhone home (tab bar)** | **iPhone season** |
+| ![iPhone home](screenshots/after/iphone-home.jpg) | ![iPhone season](screenshots/after/iphone-season.jpg) |
 
 ## What it changes
 
@@ -39,6 +41,15 @@ desktop/phone and the legacy layout on TVs).
   rewind / play / fast-forward glass cluster, bold title bottom-left above a thin white-on-gray
   scrubber, remaining controls as glass circles.
 - **Sidebar, menus, dialogs, sign-in** – glass panels with blue icons and macOS menu highlighting.
+- **iPhone (≤600 px)** – the navigation drawer becomes the iOS 26 floating glass tab bar (icons
+  over labels, selected tab blue on a darker capsule); "Jelly TV+" large title on Home with the
+  avatar top-right; centered detail hero (logo, metadata, Play pill + ✓ on one row, other actions
+  centered below); taller episode cards; Continue Watching tiles with the next one peeking in;
+  portrait player with a volume circle and Apple's control spacing.
+- **Backdrops on iPhone/iPad** – Jellyfin's mobile layout puts the backdrop on the page's own
+  banner (`#itemBackdrop`) instead of the global backdrop layer; the theme styles that banner as
+  the hero. When Jellyfin loads no backdrop at all (desktop layout narrower than 1000 px) a blurred
+  poster stands in.
 
 ## Install
 
