@@ -155,6 +155,14 @@ Movie details and artwork in the screenshots were loaded by Jellyfin from
 [TMDB](https://www.themoviedb.org/). This project uses the TMDB API but is not endorsed or
 certified by TMDB.
 
+## License
+
+The code is free for anyone to use, change, share or sell, for any purpose, with no need to
+ask or give credit ([The Unlicense](LICENSE), public domain).
+
+The pictures in the `screenshots` folder are the exception: they show Blender Foundation films,
+which keep their own Creative Commons licenses (see *Credits* above).
+
 ## Disclaimer
 
 Jelly TV+ is a fan-made theme. It is not made by, supported by, or connected to Apple, the
