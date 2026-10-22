@@ -1341,10 +1341,12 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
 .jtv-hero {
   position: relative;
   height: 86vh;
+  height: 86svh;
   min-height: 480px;
   max-height: 1180px;
   margin-bottom: 22px;
   overflow: hidden;
+  contain: paint;
   background: #000;
   color: #fff;
 }
@@ -1367,11 +1369,8 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   top: 0; left: 0; right: 0; bottom: 0;
   background-size: cover;
   background-position: center 22%;
-  transform: scale(1.06);
-  transition: transform 10s linear;
   cursor: pointer;
 }
-.jtv-hero-slide.is-active .jtv-hero-bg { transform: scale(1); }
 .jtv-hero-scrim {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -1532,22 +1531,24 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
 .jtv-hero-dot i {
   position: absolute;
   top: 0; left: 0; bottom: 0;
-  width: 0;
+  width: 100%;
   border-radius: inherit;
   background: #fff;
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 .jtv-hero-dot.is-active i { animation: jtv-dot-fill var(--jtv-hero-interval, 8000ms) linear forwards; }
-@keyframes jtv-dot-fill { from { width: 0; } to { width: 100%; } }
+@keyframes jtv-dot-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* iPad portrait / small laptops */
 @media (max-width: 999px) and (orientation: portrait) {
-  .jtv-hero { height: 70vh; }
+  .jtv-hero { height: 70vh; height: 70svh; }
   .jtv-hero-info { max-width: 80vw; }
 }
 
 /* iPhone: centered hero like the iOS app */
 @media (max-width: 600px) {
-  .jtv-hero { height: 76vh; min-height: 520px; margin-bottom: 14px; }
+  .jtv-hero { height: 76vh; height: 76svh; min-height: 520px; margin-bottom: 14px; }
   .jtv-hero-scrim {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.72) 80%, #000 100%);
   }
@@ -1572,7 +1573,6 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .jtv-hero-bg { transform: none !important; transition: none !important; }
   .jtv-hero-slide { transition: none !important; }
 }
 
