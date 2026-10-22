@@ -1463,6 +1463,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   color: #fff !important;
 }
 .jtv-hero-caption:empty { display: none; }
+.jtv-hero-caption-new { display: none; }
 
 .jtv-hero-actions { display: flex; align-items: center; margin-top: 22px; }
 .jtv-hero-actions button {
@@ -1565,6 +1566,9 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   .jtv-hero-title { font-size: 38px !important; }
   .jtv-hero-meta { justify-content: center; font-size: 16px; }
   .jtv-hero-overview { display: none; }
+  /* iPhone shows no floating badge; "New" lives in the gray caption line instead */
+  .jtv-hero-badge { display: none; }
+  .jtv-hero-caption-new { display: inline; }
   .jtv-hero-caption { font-weight: 500 !important; color: rgba(255, 255, 255, 0.62) !important; font-size: 16px !important; }
   .jtv-hero-actions { justify-content: center; margin-top: 18px; }
   .jtv-hero-play { min-width: 0; width: 56vw; max-width: 220px; height: 50px; }

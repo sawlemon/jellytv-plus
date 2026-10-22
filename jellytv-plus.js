@@ -96,7 +96,7 @@
             : '<h2 class="jtv-hero-title">' + esc(item.Name) + '</h2>') +
           '<div class="jtv-hero-meta">' + metaLine(item) + '</div>' +
           (item.Overview ? '<p class="jtv-hero-overview">' + esc(item.Overview) + '</p>' : '') +
-          '<p class="jtv-hero-caption">' + esc(caption(item)) + '</p>' +
+          '<p class="jtv-hero-caption">' + (isNew(item) ? '<span class="jtv-hero-caption-new">New · </span>' : '') + esc(caption(item)) + '</p>' +
           '<div class="jtv-hero-actions">' +
             '<button type="button" class="jtv-hero-play" data-action="play">' + ICON_PLAY + '<span>' + playLabel(item) + '</span></button>' +
             '<button type="button" class="jtv-hero-fav' + (fav ? ' is-fav' : '') + '" data-action="fav" aria-label="' + (fav ? 'Remove from Favorites' : 'Add to Favorites') + '">' + (fav ? ICON_CHECK : ICON_PLUS) + '</button>' +
