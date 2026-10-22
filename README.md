@@ -8,8 +8,10 @@ player layout. The header wordmark reads **Jelly TV+** in Apple's system font.
 Built and tested against **Jellyfin 12.2** (web client with the MUI "experimental" layout on
 desktop/phone and the legacy layout on TVs).
 
-| Home | Movie |
+| Home (hero carousel) | iPhone home |
 | --- | --- |
+| ![Home hero](screenshots/after/home-hero.jpg) | ![iPhone hero](screenshots/after/iphone-home-hero.jpg) |
+| **Home rows** | **Movie** |
 | ![Home](screenshots/after/home.jpg) | ![Movie](screenshots/after/movie-detail.jpg) |
 | **Season / episodes** | **Library** |
 | ![Season](screenshots/after/season-episodes.jpg) | ![Library](screenshots/after/library.jpg) |
@@ -23,6 +25,13 @@ desktop/phone and the legacy layout on TVs).
 | ![iPad show](screenshots/after/ipad-show.jpg) | ![iPad portrait](screenshots/after/ipad-portrait-movie.jpg) ![iPhone movie](screenshots/after/iphone-movie.jpg) |
 
 ## What it changes
+
+- **Home hero carousel** (`jellytv-plus.js`) – the Apple TV hero: the most recently added
+  movies and shows with backdrop art, full-bleed under the floating tab pill, with title logo,
+  "New" badge (added in the last 21 days), `Movie · Genre · Genre [rating]`, overview, year and
+  runtime, a white **Play / Resume** pill (series say "Play S1, E3"), a glass **+** that toggles
+  Favorite, and pill page dots that fill over the 8 s slide interval. Swipe on touch screens.
+  Below it: Continue Watching, then Recently Added. The "My Media" library tiles are hidden.
 
 - **Header** – "Jelly TV+" wordmark; library links become a centered glass tab pill with the
   active tab in blue on a darker capsule (iPad Apple TV); SyncPlay/Cast/Search grouped in a glass
@@ -55,6 +64,11 @@ desktop/phone and the legacy layout on TVs).
 
 ## Install
 
+The look is pure CSS; the home hero carousel is JavaScript and needs the
+[JavaScript Injector](https://github.com/n00bcodr/Jellyfin-JavaScript-Injector) plugin
+(Jellyfin 12 repo: `https://raw.githubusercontent.com/n00bcodr/jellyfin-plugins/main/12/manifest.json`).
+Without the plugin everything else still works and Home simply starts with Continue Watching.
+
 **Paste:** Dashboard → General → Custom CSS, paste the contents of `jellytv-plus.css`, save,
 reload clients.
 
@@ -68,7 +82,9 @@ python3 scripts/deploy.py --server http://<host>:8096 --token-file ~/.jellyfin-t
     --override overrides/hplaptop.css
 ```
 
-`deploy.py` uses only the Python standard library. It reads the current branding config, writes
+`deploy.py` uses only the Python standard library and deploys both pieces: the CSS into
+branding, and `jellytv-plus.js` as a script entry named "Jelly TV+" in JavaScript Injector
+(skipped if the plugin isn't installed; `--skip-js` to opt out). It reads the current branding config, writes
 a timestamped backup to `backups/` (git-ignored), replaces only `CustomCss`, and reads it back to
 confirm. Restore by POSTing a backup JSON to `/System/Configuration/branding`.
 
@@ -89,9 +105,21 @@ is loaded from Google Fonts and is the closest freely licensed match.
 - The theme targets stable `Mui*` component classes and legacy Jellyfin classes, never the
   hashed `css-*` ones, so it should survive minor web-client updates.
 
+## Gotcha: stale index.html after installing JavaScript Injector
+
+The injector adds its `<script>` to `index.html` on the fly, but Jellyfin still answers
+`If-Modified-Since` revalidations with `304` based on the file's original timestamp, so browsers
+that cached the page earlier keep the copy without the script. Bump the file's mtime once after
+installing the plugin (or after a Jellyfin update):
+
+```sh
+docker exec jellyfin touch /jellyfin/jellyfin-web/index.html
+```
+
 ## Limitations
 
-- CSS can't add content, so there is no auto-rotating hero carousel on Home (that needs a
-  featured-content/media-bar plugin), and the browser tab title still says "Jellyfin".
+- The browser tab title still says "Jellyfin".
+- The hero carousel is not shown on TV layouts (Tizen/webOS remote navigation); TVs keep the
+  standard rows.
 - Material icons stay Material icons (no SF Symbols); they are recolored and resized to sit
   naturally in the glass controls.

@@ -1328,6 +1328,254 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 }
 #listChildrenCollapsible .listItemButton .material-icons { font-size: 19px !important; }
 
+/* ───────────────────────── Home hero carousel (rendered by jellytv-plus.js) ───────────────────────── */
+
+/* "My Media" library tiles are redundant with the tab bar */
+.jtv-hidden-section,
+#indexPage .verticalSection:has(.card[data-type="CollectionFolder"]) { display: none !important; }
+
+/* the header floats over the hero; its dark scroll band fades in once past it */
+.MuiAppBar-root.MuiAppBar-positionFixed::before { transition: opacity 0.35s ease; }
+html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::before { opacity: 0; }
+
+.jtv-hero {
+  position: relative;
+  height: 86vh;
+  min-height: 480px;
+  max-height: 1180px;
+  margin-bottom: 22px;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+.jtv-hero-slides { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.jtv-hero-slide {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+}
+.jtv-hero-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+  transition: opacity 0.9s ease;
+}
+.jtv-hero-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: cover;
+  background-position: center 22%;
+  transform: scale(1.06);
+  transition: transform 10s linear;
+  cursor: pointer;
+}
+.jtv-hero-slide.is-active .jtv-hero-bg { transform: scale(1); }
+.jtv-hero-scrim {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(to right, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.3) 34%, rgba(0, 0, 0, 0) 60%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 16%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.5) 100%);
+  cursor: pointer;
+}
+
+.jtv-hero-info {
+  position: absolute;
+  left: 3.3%;
+  left: max(24px, 3.3%);
+  bottom: 74px;
+  width: 640px;
+  max-width: 56vw;
+  z-index: 2;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35);
+}
+.jtv-hero-badge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 4px 10px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.42);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--jtv-glass-rim);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  text-shadow: none;
+}
+.jtv-hero-logo {
+  display: block;
+  max-width: 480px;
+  max-width: min(44vw, 480px);
+  max-height: 124px;
+  width: auto;
+  height: auto;
+  margin: 0 0 16px;
+  object-fit: contain;
+  object-position: left bottom;
+  filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.4));
+  cursor: pointer;
+}
+.jtv-hero-title {
+  margin: 0 0 12px !important;
+  font-family: var(--jtv-font-display) !important;
+  font-size: 54px !important;
+  font-weight: 800 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
+  cursor: pointer;
+}
+.jtv-hero-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.94);
+}
+.jtv-hero-rating {
+  margin-left: 12px;
+  padding: 0 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 15px;
+  text-shadow: none;
+}
+.jtv-hero-overview {
+  margin: 12px 0 0 !important;
+  max-width: 560px;
+  font-size: 17px !important;
+  line-height: 1.38 !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  cursor: pointer;
+}
+.jtv-hero-caption {
+  margin: 12px 0 0 !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+.jtv-hero-caption:empty { display: none; }
+
+.jtv-hero-actions { display: flex; align-items: center; margin-top: 22px; }
+.jtv-hero-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--jtv-font);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s var(--jtv-ease), background-color 0.25s;
+}
+.jtv-hero-play {
+  height: 52px;
+  min-width: 140px;
+  padding: 0 30px 0 24px;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+}
+.jtv-hero-play svg { width: 22px; height: 22px; margin-right: 9px; fill: #000; }
+.jtv-hero-play:hover { background: #ececf0; transform: scale(1.03); }
+.jtv-hero-fav {
+  width: 52px;
+  height: 52px;
+  margin-left: 14px;
+  border-radius: 999px;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff;
+}
+.jtv-hero-fav svg { width: 24px; height: 24px; stroke: #fff; }
+.jtv-hero-fav:hover { background: var(--jtv-glass-hover); transform: scale(1.06); }
+.jtv-hero-actions button:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.7); outline-offset: 3px; }
+
+/* page dots: active one stretches into a pill that fills over the slide interval */
+.jtv-hero-dots {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 28px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.jtv-hero-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  margin: 0 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+  cursor: pointer;
+  transition: width 0.35s var(--jtv-ease), background-color 0.35s;
+}
+.jtv-hero-dot.is-active { width: 44px; background: rgba(255, 255, 255, 0.35); }
+.jtv-hero-dot i {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 0;
+  border-radius: inherit;
+  background: #fff;
+}
+.jtv-hero-dot.is-active i { animation: jtv-dot-fill var(--jtv-hero-interval, 8000ms) linear forwards; }
+@keyframes jtv-dot-fill { from { width: 0; } to { width: 100%; } }
+
+/* iPad portrait / small laptops */
+@media (max-width: 999px) and (orientation: portrait) {
+  .jtv-hero { height: 70vh; }
+  .jtv-hero-info { max-width: 80vw; }
+}
+
+/* iPhone: centered hero like the iOS app */
+@media (max-width: 600px) {
+  .jtv-hero { height: 76vh; min-height: 520px; margin-bottom: 14px; }
+  .jtv-hero-scrim {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.72) 80%, #000 100%);
+  }
+  .jtv-hero-info {
+    left: 0 !important;
+    right: 0;
+    bottom: 50px;
+    width: auto;
+    max-width: none;
+    padding: 0 22px;
+    text-align: center;
+  }
+  .jtv-hero-logo { max-width: 76vw; max-height: 100px; margin: 0 auto 14px; object-position: center bottom; }
+  .jtv-hero-title { font-size: 38px !important; }
+  .jtv-hero-meta { justify-content: center; font-size: 16px; }
+  .jtv-hero-overview { display: none; }
+  .jtv-hero-caption { font-weight: 500 !important; color: rgba(255, 255, 255, 0.62) !important; font-size: 16px !important; }
+  .jtv-hero-actions { justify-content: center; margin-top: 18px; }
+  .jtv-hero-play { min-width: 0; width: 56vw; max-width: 220px; height: 50px; }
+  .jtv-hero-fav { width: 50px; height: 50px; }
+  .jtv-hero-dots { bottom: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jtv-hero-bg { transform: none !important; transition: none !important; }
+  .jtv-hero-slide { transition: none !important; }
+}
+
 /* ───────────────────────── Home ───────────────────────── */
 
 #indexPage,
