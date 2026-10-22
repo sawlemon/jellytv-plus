@@ -355,6 +355,11 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   white-space: nowrap;
 }
 
+/* TVs: Jellyfin gives the header a fixed ~47px box with contain:content, which clipped our taller row */
+.layout-tv .skinHeader:not(.osdHeader) { contain: none !important; }
+.layout-tv .headerTop { padding-top: 14px; }
+.layout-tv .headerTabs { margin-top: 14px; }
+
 .headerTabs .emby-tabs-slider,
 .sectionTabs .emby-tabs-slider {
   display: inline-flex;
@@ -917,7 +922,17 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 .itemDetailPage .mainDetailButtons .playstatebutton-icon-played { color: #fff !important; }
 
 /* Jellyfin hides .detailLogo on mobile/TV layouts; the theme always shows it when one exists */
-.itemDetailPage .detailLogo:not(.hide) { display: block !important; }
+html:not(.layout-tv) .itemDetailPage .detailLogo:not(.hide) { display: block !important; }
+
+/* Jellyfin's TV CSS hides the banner box; the hero layout needs it as the spacer the info overlaps */
+.layout-tv .itemDetailPage .itemBackdrop { display: block !important; }
+/* …but when Backdrops are off on the TV (Settings › Display) there is no art to show:
+   collapse the hero instead of leaving a black void */
+.layout-tv .backgroundContainer:not(.withBackdrop) ~ .mainAnimatedPages .itemDetailPage .itemBackdrop {
+  height: 330px !important;
+  min-height: 0 !important;
+}
+.layout-tv .backgroundContainer:not(.withBackdrop) ~ .mainAnimatedPages .itemDetailPage .detailLogo { display: none !important; }
 
 /* title art goes bottom-left like Apple TV */
 .itemDetailPage .detailLogo {
@@ -978,7 +993,7 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 .itemDetailPage .itemName.subtitle { font-size: 28px !important; }
 .itemDetailPage .parentName { font-size: 18px !important; font-weight: 600 !important; margin: 0 0 2px !important; }
 .itemDetailPage .parentName .button-link { color: rgba(255, 255, 255, 0.86) !important; }
-.itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .parentName { display: none !important; }
+html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .parentName { display: none !important; }
 
 .itemDetailPage .itemMiscInfo {
   justify-content: flex-start !important;
@@ -1064,7 +1079,7 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
 .itemDetailPage .detailPagePrimaryContent { background: transparent !important; }
 
 /* logo art replaces the plain-text title (desktop browsers with :has) */
-.itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .itemName.parentNameLast {
+html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .itemName.parentNameLast {
   position: absolute !important;
   width: 1px; height: 1px;
   overflow: hidden;
