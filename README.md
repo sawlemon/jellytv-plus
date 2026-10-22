@@ -8,17 +8,22 @@ Samsung TV app). Your movies and shows stay exactly the same; only the look chan
 
 Made for **Jellyfin 12.2**. It may need small fixes on other versions.
 
+The screenshots use free, openly licensed films from the
+[Blender Foundation](https://studio.blender.org/films/) (see *Credits* below).
+
 | Home | iPhone |
 | --- | --- |
-| ![Home screen with a large rotating banner](screenshots/after/home-hero.jpg) | ![iPhone home screen](screenshots/after/iphone-home-hero.jpg) |
-| **Movie page** | **Episodes** |
-| ![Movie page](screenshots/after/movie-detail.jpg) | ![Episode row](screenshots/after/season-episodes.jpg) |
+| ![Home screen with a large rotating banner](screenshots/home.jpg) | ![iPhone home screen with the bottom menu bar](screenshots/iphone-home.jpg) |
+| **Home: Continue Watching and Recently Added** | **iPhone movie page** |
+| ![Home screen rows](screenshots/home-rows.jpg) | ![iPhone movie page](screenshots/iphone-movie.jpg) |
+| **Movie page** | **Cast and similar movies** |
+| ![Movie page](screenshots/movie.jpg) | ![Cast and More Like This](screenshots/movie-cast.jpg) |
 | **Library** | **Video player** |
-| ![Movie library](screenshots/after/library.jpg) | ![Video player](screenshots/after/player.jpg) |
+| ![Movie library](screenshots/library.jpg) | ![Video player](screenshots/player.jpg) |
 | **iPad** | **Sign in** |
-| ![iPad show page](screenshots/after/ipad-show.jpg) | ![Sign-in page](screenshots/after/sign-in.jpg) |
-| **TV** | **iPhone menu bar** |
-| ![TV layout](screenshots/after/tv-layout.jpg) | ![iPhone bottom menu](screenshots/after/iphone-home.jpg) |
+| ![iPad movie page](screenshots/ipad-movie.jpg) | ![Sign-in page](screenshots/sign-in.jpg) |
+| **TV: Home** | **TV: Movie page** |
+| ![TV home screen](screenshots/tv-home.jpg) | ![TV movie page](screenshots/tv-movie.jpg) |
 
 ## What you get
 
@@ -127,8 +132,30 @@ Delete everything in **Dashboard → General → Custom CSS**, and turn off or d
 - **Updates:** a big Jellyfin update can move things around. If something looks wrong after an
   update, please open an issue.
 
+## Credits
+
+All films in the screenshots are open movies made by the Blender Foundation / Blender Studio
+and shared under Creative Commons Attribution (CC BY) licenses, which allow sharing as long as
+the film is credited:
+
+| Film | Made by | License |
+| --- | --- | --- |
+| Elephants Dream (2006) | Blender Foundation and Netherlands Media Art Institute | [CC BY 2.5](https://creativecommons.org/licenses/by/2.5/) |
+| Big Buck Bunny (2008) | Blender Foundation | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+| Sintel (2010) | Blender Foundation | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+| Tears of Steel (2012) | Blender Foundation | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+| Caminandes 2: Gran Dillama (2013) | Blender Foundation | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+| Cosmos Laundromat (2015) | Blender Institute | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| Spring (2019) | Blender Animation Studio | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| Sprite Fright (2021) | Blender Studio | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+
+More about these films: [studio.blender.org/films](https://studio.blender.org/films/).
+
+Movie details and artwork in the screenshots were loaded by Jellyfin from
+[TMDB](https://www.themoviedb.org/). This project uses the TMDB API but is not endorsed or
+certified by TMDB.
+
 ## Disclaimer
 
-Jelly TV+ is a fan-made theme. It is not made by, supported by, or connected to Apple or the
-Jellyfin project. "Apple TV" is a trademark of Apple Inc. Movie posters and pictures in the
-screenshots belong to their owners and are shown only to demonstrate the theme.
+Jelly TV+ is a fan-made theme. It is not made by, supported by, or connected to Apple, the
+Jellyfin project or the Blender Foundation. "Apple TV" is a trademark of Apple Inc.
