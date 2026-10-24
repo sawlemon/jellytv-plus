@@ -4,12 +4,14 @@
  *
  * Font: Apple devices render the real SF Pro via the system font stack.
  * Everything else falls back to Inter (SF Pro may not be redistributed).
- * Selectors avoid :is()/:where()/:has() in rules that must work on Tizen 6
- * (Chromium 76); :has() is only used for desktop-only refinements.
+ * TV layout: the theme is intentionally disabled in Jellyfin's TV layout
+ * (html.layout-tv, e.g. the Samsung Tizen app) so TVs keep the stock look.
+ * Every selector below is scoped with html:not(.layout-tv); scripts/scope_css.py
+ * applies that scoping (safe to re-run).
  */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
-:root {
+html:not(.layout-tv) {
   --jtv-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --jtv-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
@@ -39,62 +41,98 @@
   --jtv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* TVs: blur is expensive on Tizen/webOS — use denser fills instead */
-html.layout-tv {
-  --jtv-glass: rgba(58, 58, 62, 0.88);
-  --jtv-glass-strong: rgba(40, 40, 42, 0.96);
-  --jtv-glass-filter: none;
-}
-
 /* ───────────────────────── Base & typography ───────────────────────── */
 
 /* only the canvas is painted: Jellyfin's backdrop layer sits at z-index -1 under body */
-html { background: var(--jtv-bg) !important; }
-body { background: transparent !important; }
-html, body {
+html:not(.layout-tv) { background: var(--jtv-bg) !important; }
+html:not(.layout-tv) body { background: transparent !important; }
+html:not(.layout-tv),
+html:not(.layout-tv) body {
   color: var(--jtv-label);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body, button, input, select, textarea,
-h1, h2, h3, h4, h5, h6,
-.emby-button, .emby-input, .emby-select, .emby-textarea, .emby-tab-button,
-.cardText, .sectionTitle, .listItemBodyText, .itemName, .pageTitle, .navMenuOptionText,
-.MuiTypography-root, .MuiButtonBase-root, .MuiButton-root, .MuiChip-root,
-.MuiInputBase-root, .MuiInputBase-input, .MuiFormLabel-root, .MuiMenuItem-root,
-.MuiListItemText-primary, .MuiListItemText-secondary, .MuiListSubheader-root,
-.MuiTab-root, .MuiTooltip-tooltip, .MuiAlert-message, .MuiTableCell-root, .MuiDialogTitle-root {
+html:not(.layout-tv),
+html:not(.layout-tv) body,
+html:not(.layout-tv) button,
+html:not(.layout-tv) input,
+html:not(.layout-tv) select,
+html:not(.layout-tv) textarea,
+html:not(.layout-tv) h1,
+html:not(.layout-tv) h2,
+html:not(.layout-tv) h3,
+html:not(.layout-tv) h4,
+html:not(.layout-tv) h5,
+html:not(.layout-tv) h6,
+html:not(.layout-tv) .emby-button,
+html:not(.layout-tv) .emby-input,
+html:not(.layout-tv) .emby-select,
+html:not(.layout-tv) .emby-textarea,
+html:not(.layout-tv) .emby-tab-button,
+html:not(.layout-tv) .cardText,
+html:not(.layout-tv) .sectionTitle,
+html:not(.layout-tv) .listItemBodyText,
+html:not(.layout-tv) .itemName,
+html:not(.layout-tv) .pageTitle,
+html:not(.layout-tv) .navMenuOptionText,
+html:not(.layout-tv) .MuiTypography-root,
+html:not(.layout-tv) .MuiButtonBase-root,
+html:not(.layout-tv) .MuiButton-root,
+html:not(.layout-tv) .MuiChip-root,
+html:not(.layout-tv) .MuiInputBase-root,
+html:not(.layout-tv) .MuiInputBase-input,
+html:not(.layout-tv) .MuiFormLabel-root,
+html:not(.layout-tv) .MuiMenuItem-root,
+html:not(.layout-tv) .MuiListItemText-primary,
+html:not(.layout-tv) .MuiListItemText-secondary,
+html:not(.layout-tv) .MuiListSubheader-root,
+html:not(.layout-tv) .MuiTab-root,
+html:not(.layout-tv) .MuiTooltip-tooltip,
+html:not(.layout-tv) .MuiAlert-message,
+html:not(.layout-tv) .MuiTableCell-root,
+html:not(.layout-tv) .MuiDialogTitle-root {
   font-family: var(--jtv-font) !important;
 }
 
-h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3 {
+html:not(.layout-tv) h1,
+html:not(.layout-tv) h2,
+html:not(.layout-tv) .sectionTitle,
+html:not(.layout-tv) .itemName,
+html:not(.layout-tv) .MuiTypography-h1,
+html:not(.layout-tv) .MuiTypography-h2,
+html:not(.layout-tv) .MuiTypography-h3 {
   font-family: var(--jtv-font-display) !important;
   letter-spacing: -0.015em;
 }
 
-.backgroundContainer { background-color: var(--jtv-bg) !important; }
+html:not(.layout-tv) .backgroundContainer { background-color: var(--jtv-bg) !important; }
 
-::selection { background: rgba(10, 132, 255, 0.45); }
+html:not(.layout-tv)::selection,
+html:not(.layout-tv) ::selection { background: rgba(10, 132, 255, 0.45); }
 
 /* Thin overlay scrollbars like macOS */
-::-webkit-scrollbar { width: 11px; height: 11px; background: transparent; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
+html:not(.layout-tv)::-webkit-scrollbar,
+html:not(.layout-tv) ::-webkit-scrollbar { width: 11px; height: 11px; background: transparent; }
+html:not(.layout-tv)::-webkit-scrollbar-track,
+html:not(.layout-tv) ::-webkit-scrollbar-track { background: transparent; }
+html:not(.layout-tv)::-webkit-scrollbar-thumb,
+html:not(.layout-tv) ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.28);
   border: 3px solid transparent;
   background-clip: content-box;
   border-radius: 999px;
 }
-::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.45); }
-::-webkit-scrollbar-corner { background: transparent; }
-.layout-tv ::-webkit-scrollbar { display: none; }
+html:not(.layout-tv)::-webkit-scrollbar-thumb:hover,
+html:not(.layout-tv) ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.45); }
+html:not(.layout-tv)::-webkit-scrollbar-corner,
+html:not(.layout-tv) ::-webkit-scrollbar-corner { background: transparent; }
 
-.button-link { color: var(--jtv-accent-text) !important; }
+html:not(.layout-tv) .button-link { color: var(--jtv-accent-text) !important; }
 
 /* ───────────────────────── Header (MUI app bar) ───────────────────────── */
 
-.MuiAppBar-root.MuiAppBar-positionFixed {
+html:not(.layout-tv) .MuiAppBar-root.MuiAppBar-positionFixed {
   background: transparent !important;
   box-shadow: none !important;
   border: 0 !important;
@@ -102,7 +140,7 @@ h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypo
 }
 
 /* progressive scroll-edge blur behind the floating controls */
-.MuiAppBar-root.MuiAppBar-positionFixed::before {
+html:not(.layout-tv) .MuiAppBar-root.MuiAppBar-positionFixed::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -116,14 +154,14 @@ h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypo
   z-index: -1;
 }
 
-.MuiAppBar-root > .MuiToolbar-root:first-child {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child {
   min-height: 76px !important;
   position: relative;
   justify-content: flex-end;
 }
 
 /* "Jelly TV+" wordmark */
-.MuiAppBar-root > .MuiToolbar-root:first-child::before {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child::before {
   content: "Jelly TV+";
   position: absolute;
   left: 3.3%;
@@ -141,7 +179,7 @@ h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypo
 }
 
 /* Floating glass tab pill (iPad Apple TV) */
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root {
   position: absolute;
   top: 14px;
   left: 0;
@@ -162,9 +200,9 @@ h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypo
   overflow-x: auto;
   scrollbar-width: none;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root::-webkit-scrollbar { display: none; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root::-webkit-scrollbar { display: none; }
 
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-root {
   height: 42px;
   min-width: 0;
   margin: 0 !important;
@@ -178,38 +216,38 @@ h1, h2, .sectionTitle, .itemName, .MuiTypography-h1, .MuiTypography-h2, .MuiTypo
   white-space: nowrap;
   transition: background-color 0.25s var(--jtv-ease), color 0.25s var(--jtv-ease);
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-root:hover {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-root:hover {
   background: rgba(255, 255, 255, 0.1) !important;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a .MuiButton-startIcon {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a .MuiButton-startIcon {
   display: none !important;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-colorPrimary {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a.MuiButton-colorPrimary {
   background: rgba(0, 0, 0, 0.42) !important;
   color: var(--jtv-accent-text) !important;
   font-weight: 600 !important;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a .MuiTouchRipple-root { display: none; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a .MuiTouchRipple-root { display: none; }
 
 /* The server-logo link becomes the "Home" tab */
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a[href="#/"] {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a[href="#/"] {
   font-size: 0 !important;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a[href="#/"]::after {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root > a[href="#/"]::after {
   content: "Home";
   font-size: 17px;
 }
-body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButton-colorPrimary)) > a[href="#/"] {
+html:not(.layout-tv) body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButton-colorPrimary)) > a[href="#/"] {
   background: rgba(0, 0, 0, 0.42) !important;
   color: var(--jtv-accent-text) !important;
   font-weight: 600 !important;
 }
 
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root,
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { box-sizing: border-box; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root,
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { box-sizing: border-box; }
 
 /* Right-hand controls: grouped glass capsule + avatar circle */
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root {
   flex: 0 0 auto !important;
   display: flex;
   align-items: center;
@@ -222,22 +260,22 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   backdrop-filter: var(--jtv-glass-filter);
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child {
   width: 50px;
   padding: 0;
   justify-content: center;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root {
   width: 42px;
   height: 42px;
   padding: 9px !important;
   color: #fff !important;
   border-radius: 999px;
 }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root:hover {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root:hover {
   background: rgba(255, 255, 255, 0.1) !important;
 }
-.MuiAppBar-root .MuiAvatar-root {
+html:not(.layout-tv) .MuiAppBar-root .MuiAvatar-root {
   width: 34px !important;
   height: 34px !important;
   background: linear-gradient(180deg, #8e8e93, #636366) !important;
@@ -246,34 +284,34 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
 }
 
 /* Library toolbar (second row): big title, white Play pill, glass groups */
-.MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root {
   min-height: 64px !important;
   gap: 10px;
 }
-.MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 {
   font-size: 32px !important;
   font-weight: 700 !important;
   letter-spacing: -0.025em !important;
   text-transform: none;
 }
-.MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root > .MuiButton-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root > .MuiButton-root {
   text-transform: none !important;
   color: #fff !important;
   padding-left: 0 !important;
 }
-.MuiAppBar-root .MuiChip-root {
+html:not(.layout-tv) .MuiAppBar-root .MuiChip-root {
   height: 26px !important;
   background: var(--jtv-fill) !important;
   color: var(--jtv-label-2) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
 }
-.MuiAppBar-root .MuiButtonGroup-root {
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-root {
   box-shadow: none !important;
   border-radius: 999px !important;
   align-items: center;
 }
-.MuiAppBar-root .MuiButtonGroup-root .MuiButton-root {
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-root .MuiButton-root {
   min-width: 40px !important;
   height: 40px;
   border: 0 !important;
@@ -282,32 +320,32 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   text-transform: none !important;
   box-shadow: none !important;
 }
-.MuiAppBar-root .MuiButtonGroup-contained {
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-contained {
   gap: 10px;
   background: transparent !important;
 }
-.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-firstButton {
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-firstButton {
   background: #fff !important;
   color: #000 !important;
   padding: 0 20px 0 16px !important;
   font-size: 15px !important;
   font-weight: 600 !important;
 }
-.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-firstButton:hover { background: #e8e8ed !important; }
-.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-lastButton,
-.MuiAppBar-root .MuiButtonGroup-text {
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-firstButton:hover { background: #e8e8ed !important; }
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-lastButton,
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-text {
   background: var(--jtv-glass) !important;
   -webkit-backdrop-filter: var(--jtv-glass-filter);
   backdrop-filter: var(--jtv-glass-filter);
   box-shadow: var(--jtv-glass-rim) !important;
 }
-.MuiAppBar-root .MuiButtonGroup-text { padding: 0 3px; height: 44px; }
-.MuiAppBar-root .MuiButtonGroup-text .MuiButton-root:hover,
-.MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-lastButton:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
-.MuiAppBar-root .MuiButtonGroup-root .Mui-disabled { color: rgba(255, 255, 255, 0.28) !important; }
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-text { padding: 0 3px; height: 44px; }
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-text .MuiButton-root:hover,
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-contained .MuiButtonGroup-lastButton:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
+html:not(.layout-tv) .MuiAppBar-root .MuiButtonGroup-root .Mui-disabled { color: rgba(255, 255, 255, 0.28) !important; }
 
 /* A–Z jump bar */
-.alphaPicker-fixed-right .MuiPaper-root {
+html:not(.layout-tv) .alphaPicker-fixed-right .MuiPaper-root {
   background: var(--jtv-glass) !important;
   -webkit-backdrop-filter: var(--jtv-glass-filter);
   backdrop-filter: var(--jtv-glass-filter);
@@ -315,37 +353,37 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   border-radius: 999px !important;
   padding: 6px 0;
 }
-.alphaPicker-fixed-right .MuiToggleButton-root {
+html:not(.layout-tv) .alphaPicker-fixed-right .MuiToggleButton-root {
   border: 0 !important;
   color: var(--jtv-label-2) !important;
   font-size: 10.5px !important;
   font-weight: 600 !important;
   padding: 2px 7px !important;
 }
-.alphaPicker-fixed-right .MuiToggleButton-root.Mui-selected,
-.alphaPicker-fixed-right .MuiToggleButton-root:hover {
+html:not(.layout-tv) .alphaPicker-fixed-right .MuiToggleButton-root.Mui-selected,
+html:not(.layout-tv) .alphaPicker-fixed-right .MuiToggleButton-root:hover {
   color: var(--jtv-accent-text) !important;
   background: transparent !important;
 }
 
 /* ───────────────────────── Legacy header (TV / legacy layout) ───────────────────────── */
 
-.skinHeader {
+html:not(.layout-tv) .skinHeader {
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0)) !important;
   box-shadow: none !important;
   color: #fff;
 }
-.skinHeader.semiTransparent { background: transparent !important; }
+html:not(.layout-tv) .skinHeader.semiTransparent { background: transparent !important; }
 
-.pageTitleWithDefaultLogo,
-.pageTitleWithLogo {
+html:not(.layout-tv) .pageTitleWithDefaultLogo,
+html:not(.layout-tv) .pageTitleWithLogo {
   background-image: none !important;
   width: auto !important;
   min-width: 0 !important;
   height: auto !important;
 }
-.pageTitleWithDefaultLogo::before,
-.pageTitleWithLogo::before {
+html:not(.layout-tv) .pageTitleWithDefaultLogo::before,
+html:not(.layout-tv) .pageTitleWithLogo::before {
   content: "Jelly TV+";
   font-family: var(--jtv-font-display);
   font-size: 24px;
@@ -355,13 +393,8 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   white-space: nowrap;
 }
 
-/* TVs: Jellyfin gives the header a fixed ~47px box with contain:content, which clipped our taller row */
-.layout-tv .skinHeader:not(.osdHeader) { contain: none !important; }
-.layout-tv .headerTop { padding-top: 14px; }
-.layout-tv .headerTabs { margin-top: 14px; }
-
-.headerTabs .emby-tabs-slider,
-.sectionTabs .emby-tabs-slider {
+html:not(.layout-tv) .headerTabs .emby-tabs-slider,
+html:not(.layout-tv) .sectionTabs .emby-tabs-slider {
   display: inline-flex;
   padding: 4px;
   border-radius: 999px;
@@ -370,7 +403,7 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   backdrop-filter: var(--jtv-glass-filter);
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
 }
-.emby-tab-button {
+html:not(.layout-tv) .emby-tab-button {
   border-radius: 999px !important;
   padding: 0.55em 1.2em !important;
   color: #fff !important;
@@ -379,22 +412,17 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   text-transform: none !important;
   border: 0 !important;
 }
-.emby-tab-button.emby-tab-button-active {
+html:not(.layout-tv) .emby-tab-button.emby-tab-button-active {
   background: rgba(0, 0, 0, 0.42) !important;
   color: var(--jtv-accent-text) !important;
   font-weight: 600 !important;
 }
-.emby-tab-button-selection-bar { display: none !important; }
-.layout-tv .emby-tab-button:focus {
-  background: #fff !important;
-  color: #000 !important;
-  transform: scale(1.06);
-}
+html:not(.layout-tv) .emby-tab-button-selection-bar { display: none !important; }
 
 /* ───────────────────────── Sidebar / drawers (iPad glass sidebar) ───────────────────────── */
 
-.mainDrawer,
-.MuiDrawer-paper {
+html:not(.layout-tv) .mainDrawer,
+html:not(.layout-tv) .MuiDrawer-paper {
   background: rgba(28, 28, 30, 0.62) !important;
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   backdrop-filter: blur(40px) saturate(180%);
@@ -402,12 +430,11 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.45) !important;
   color: #fff !important;
 }
-.layout-tv .mainDrawer { background: rgba(28, 28, 30, 0.97) !important; }
 
-.mainDrawer-scrollContainer { padding: 12px 10px 24px !important; }
+html:not(.layout-tv) .mainDrawer-scrollContainer { padding: 12px 10px 24px !important; }
 
-.navMenuOption,
-.MuiDrawer-paper .MuiListItemButton-root {
+html:not(.layout-tv) .navMenuOption,
+html:not(.layout-tv) .MuiDrawer-paper .MuiListItemButton-root {
   margin: 2px 0 !important;
   padding: 10px 14px !important;
   border-radius: 12px !important;
@@ -416,21 +443,21 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   font-weight: 500;
   transition: background-color 0.2s var(--jtv-ease);
 }
-.navMenuOption:hover,
-.MuiDrawer-paper .MuiListItemButton-root:hover {
+html:not(.layout-tv) .navMenuOption:hover,
+html:not(.layout-tv) .MuiDrawer-paper .MuiListItemButton-root:hover {
   background: rgba(255, 255, 255, 0.08) !important;
 }
-.navMenuOption-selected,
-.MuiDrawer-paper .MuiListItemButton-root.Mui-selected {
+html:not(.layout-tv) .navMenuOption-selected,
+html:not(.layout-tv) .MuiDrawer-paper .MuiListItemButton-root.Mui-selected {
   background: rgba(255, 255, 255, 0.14) !important;
 }
-.navMenuOptionIcon,
-.MuiDrawer-paper .MuiListItemIcon-root {
+html:not(.layout-tv) .navMenuOptionIcon,
+html:not(.layout-tv) .MuiDrawer-paper .MuiListItemIcon-root {
   color: var(--jtv-accent) !important;
   min-width: 36px !important;
 }
-.sidebarHeader,
-.MuiDrawer-paper .MuiListSubheader-root {
+html:not(.layout-tv) .sidebarHeader,
+html:not(.layout-tv) .MuiDrawer-paper .MuiListSubheader-root {
   background: transparent !important;
   color: var(--jtv-label-3) !important;
   font-size: 15px !important;
@@ -440,17 +467,17 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   text-transform: none !important;
   letter-spacing: 0;
 }
-.MuiDrawer-paper .MuiDivider-root { border-color: rgba(255, 255, 255, 0.06) !important; }
-.MuiDrawer-modal .MuiDrawer-paper { width: 320px !important; width: min(320px, 84vw) !important; }
-.MuiDrawer-paper .MuiList-root { padding: 8px 10px !important; }
+html:not(.layout-tv) .MuiDrawer-paper .MuiDivider-root { border-color: rgba(255, 255, 255, 0.06) !important; }
+html:not(.layout-tv) .MuiDrawer-modal .MuiDrawer-paper { width: 320px !important; width: min(320px, 84vw) !important; }
+html:not(.layout-tv) .MuiDrawer-paper .MuiList-root { padding: 8px 10px !important; }
 
 /* drawer header: server logo + name → "Jelly TV+" */
-.MuiDrawer-paper a.MuiListItemButton-root[href="#/"] {
+html:not(.layout-tv) .MuiDrawer-paper a.MuiListItemButton-root[href="#/"] {
   background: transparent !important;
   padding: 18px 14px 14px !important;
 }
-.MuiDrawer-paper a.MuiListItemButton-root[href="#/"] > * { display: none !important; }
-.MuiDrawer-paper a.MuiListItemButton-root[href="#/"]::after {
+html:not(.layout-tv) .MuiDrawer-paper a.MuiListItemButton-root[href="#/"] > * { display: none !important; }
+html:not(.layout-tv) .MuiDrawer-paper a.MuiListItemButton-root[href="#/"]::after {
   content: "Jelly TV+";
   font-family: var(--jtv-font-display);
   font-size: 26px;
@@ -461,25 +488,25 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
 
 /* ───────────────────────── Sections & titles ───────────────────────── */
 
-.sectionTitle,
-.sectionTitle-cards,
-.sectionTitleTextButton {
+html:not(.layout-tv) .sectionTitle,
+html:not(.layout-tv) .sectionTitle-cards,
+html:not(.layout-tv) .sectionTitleTextButton {
   font-size: 22px !important;
   font-weight: 700 !important;
   color: #fff !important;
   letter-spacing: -0.02em;
   margin-bottom: 0.35em !important;
 }
-.sectionTitleTextButton .material-icons,
-.sectionTitleTextButton svg {
+html:not(.layout-tv) .sectionTitleTextButton .material-icons,
+html:not(.layout-tv) .sectionTitleTextButton svg {
   color: rgba(255, 255, 255, 0.55) !important;
   font-size: 26px !important;
   margin-left: 0 !important;
 }
-.sectionTitleTextButton { text-decoration: none !important; padding: 0 !important; }
+html:not(.layout-tv) .sectionTitleTextButton { text-decoration: none !important; padding: 0 !important; }
 
 /* scroll arrows → small glass circles */
-.emby-scrollbuttons-button {
+html:not(.layout-tv) .emby-scrollbuttons-button {
   width: 34px !important;
   height: 34px !important;
   padding: 0 !important;
@@ -491,32 +518,32 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   box-shadow: var(--jtv-glass-rim);
   color: #fff !important;
 }
-.emby-scrollbuttons-button {
+html:not(.layout-tv) .emby-scrollbuttons-button {
   -webkit-clip-path: inset(0 round 999px);
   clip-path: inset(0 round 999px);
 }
-.emby-scrollbuttons-button .material-icons,
-.emby-scrollbuttons-button svg { font-size: 22px !important; }
-.emby-scrollbuttons-button[disabled] { opacity: 0.35; }
+html:not(.layout-tv) .emby-scrollbuttons-button .material-icons,
+html:not(.layout-tv) .emby-scrollbuttons-button svg { font-size: 22px !important; }
+html:not(.layout-tv) .emby-scrollbuttons-button[disabled] { opacity: 0.35; }
 
 /* ───────────────────────── Cards ───────────────────────── */
 
-.cardBox { transition: transform 0.4s var(--jtv-ease); }
+html:not(.layout-tv) .cardBox { transition: transform 0.4s var(--jtv-ease); }
 
-.cardScalable {
+html:not(.layout-tv) .cardScalable {
   border-radius: var(--jtv-radius-card) !important;
   overflow: hidden;
   background: #1c1c1e;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   transition: transform 0.45s var(--jtv-ease), box-shadow 0.45s var(--jtv-ease);
 }
-.portraitCard .cardScalable,
-.overflowPortraitCard .cardScalable,
-.squareCard .cardScalable,
-.overflowSquareCard .cardScalable { border-radius: var(--jtv-radius-poster) !important; }
+html:not(.layout-tv) .portraitCard .cardScalable,
+html:not(.layout-tv) .overflowPortraitCard .cardScalable,
+html:not(.layout-tv) .squareCard .cardScalable,
+html:not(.layout-tv) .overflowSquareCard .cardScalable { border-radius: var(--jtv-radius-poster) !important; }
 
 /* glass rim on every artwork tile */
-.cardScalable::after {
+html:not(.layout-tv) .cardScalable::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -526,72 +553,65 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   z-index: 5;
 }
 
-.cardContent,
-.cardImageContainer,
-.cardImage {
+html:not(.layout-tv) .cardContent,
+html:not(.layout-tv) .cardImageContainer,
+html:not(.layout-tv) .cardImage {
   border-radius: inherit !important;
 }
-.cardContent-shadow { box-shadow: none !important; }
-.defaultCardBackground,
-.cardImageContainer.defaultCardBackground {
+html:not(.layout-tv) .cardContent-shadow { box-shadow: none !important; }
+html:not(.layout-tv) .defaultCardBackground,
+html:not(.layout-tv) .cardImageContainer.defaultCardBackground {
   background: linear-gradient(160deg, #3a3a3c, #1c1c1e) !important;
 }
 
 /* hover / focus lift (macOS hover, tvOS focus) */
-.layout-desktop .card-hoverable:hover .cardScalable {
+html.layout-desktop:not(.layout-tv) .card-hoverable:hover .cardScalable {
   transform: scale(1.035);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
 }
-.layout-tv .card:focus .cardScalable {
-  transform: scale(1.1);
-  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.7);
-}
-.layout-tv .card:focus .cardBox,
-.layout-tv .cardBox-focustransform { transform: none !important; border: 0 !important; }
-.layout-tv .card:focus .cardScalable::after { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35); }
-.card:focus .cardBox.visualCardBox,
-.card:focus .cardBox:not(.visualCardBox) .cardScalable { border: 0 !important; }
+html:not(.layout-tv) .card:focus .cardBox.visualCardBox,
+html:not(.layout-tv) .card:focus .cardBox:not(.visualCardBox) .cardScalable { border: 0 !important; }
 
 /* text under posters (Mac library style) */
-.cardText {
+html:not(.layout-tv) .cardText {
   font-size: 14px !important;
   font-weight: 500;
   color: #fff;
   padding: 0.12em 0.15em !important;
   line-height: 1.3 !important;
 }
-.cardText.cardText-secondary {
+html:not(.layout-tv) .cardText.cardText-secondary {
   font-size: 13px !important;
   font-weight: 400;
   color: var(--jtv-label-2) !important;
 }
-.cardText .textActionButton { color: inherit !important; font-weight: inherit; }
-.portraitCard .cardText,
-.overflowPortraitCard .cardText,
-.squareCard .cardText,
-.overflowSquareCard .cardText {
+html:not(.layout-tv) .cardText .textActionButton { color: inherit !important; font-weight: inherit; }
+html:not(.layout-tv) .portraitCard .cardText,
+html:not(.layout-tv) .overflowPortraitCard .cardText,
+html:not(.layout-tv) .squareCard .cardText,
+html:not(.layout-tv) .overflowSquareCard .cardText {
   text-align: left !important;
   padding-left: 2px !important;
 }
 
 /* Landscape tiles: metadata sits inside the artwork over a frosted fade (Apple TV "Continue Watching") */
-.backdropCard .cardBox,
-.overflowBackdropCard .cardBox,
-.smallBackdropCard .cardBox {
+html:not(.layout-tv) .backdropCard .cardBox,
+html:not(.layout-tv) .overflowBackdropCard .cardBox,
+html:not(.layout-tv) .smallBackdropCard .cardBox {
   display: grid !important;
   grid-template-columns: 100%;
   grid-template-rows: 1fr auto auto auto 12px;
   padding-bottom: 0 !important;
 }
-.backdropCard .cardScalable,
-.overflowBackdropCard .cardScalable,
-.smallBackdropCard .cardScalable {
+html:not(.layout-tv) .backdropCard .cardScalable,
+html:not(.layout-tv) .overflowBackdropCard .cardScalable,
+html:not(.layout-tv) .smallBackdropCard .cardScalable {
   grid-row: 1 / 6;
   grid-column: 1;
 }
-.backdropCard .cardText,
-.overflowBackdropCard .cardText,
-.smallBackdropCard .cardText {
+html:not(.layout-tv) .backdropCard .cardText,
+html:not(.layout-tv) .overflowBackdropCard .cardText,
+html:not(.layout-tv) .smallBackdropCard .cardText {
   grid-column: 1;
   z-index: 6;
   align-self: end;
@@ -600,30 +620,30 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
-.backdropCard .cardText a,
-.overflowBackdropCard .cardText a,
-.smallBackdropCard .cardText a { pointer-events: auto; }
-.backdropCard .cardText-first,
-.overflowBackdropCard .cardText-first,
-.smallBackdropCard .cardText-first {
+html:not(.layout-tv) .backdropCard .cardText a,
+html:not(.layout-tv) .overflowBackdropCard .cardText a,
+html:not(.layout-tv) .smallBackdropCard .cardText a { pointer-events: auto; }
+html:not(.layout-tv) .backdropCard .cardText-first,
+html:not(.layout-tv) .overflowBackdropCard .cardText-first,
+html:not(.layout-tv) .smallBackdropCard .cardText-first {
   grid-row: 2;
   font-size: 16px !important;
   font-weight: 600 !important;
 }
-.backdropCard .cardText.cardText-secondary,
-.overflowBackdropCard .cardText.cardText-secondary,
-.smallBackdropCard .cardText.cardText-secondary {
+html:not(.layout-tv) .backdropCard .cardText.cardText-secondary,
+html:not(.layout-tv) .overflowBackdropCard .cardText.cardText-secondary,
+html:not(.layout-tv) .smallBackdropCard .cardText.cardText-secondary {
   grid-row: 3;
   color: rgba(255, 255, 255, 0.78) !important;
   font-weight: 500 !important;
 }
-.backdropCard .cardText:not(.cardText-first):not(.cardText-secondary),
-.overflowBackdropCard .cardText:not(.cardText-first):not(.cardText-secondary) {
+html:not(.layout-tv) .backdropCard .cardText:not(.cardText-first):not(.cardText-secondary),
+html:not(.layout-tv) .overflowBackdropCard .cardText:not(.cardText-first):not(.cardText-secondary) {
   grid-row: 4;
   color: rgba(255, 255, 255, 0.7) !important;
 }
-.backdropCard .cardFooter,
-.overflowBackdropCard .cardFooter {
+html:not(.layout-tv) .backdropCard .cardFooter,
+html:not(.layout-tv) .overflowBackdropCard .cardFooter {
   grid-row: 2 / 5;
   grid-column: 1;
   z-index: 6;
@@ -632,9 +652,9 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   text-align: left;
   padding: 0 46px 0 16px !important;
 }
-.backdropCard .cardContent::after,
-.overflowBackdropCard .cardContent::after,
-.smallBackdropCard .cardContent::after {
+html:not(.layout-tv) .backdropCard .cardContent::after,
+html:not(.layout-tv) .overflowBackdropCard .cardContent::after,
+html:not(.layout-tv) .smallBackdropCard .cardContent::after {
   content: "";
   position: absolute;
   left: 0; right: 0; bottom: 0;
@@ -647,37 +667,31 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   pointer-events: none;
   z-index: 1;
 }
-.layout-tv .backdropCard .cardContent::after,
-.layout-tv .overflowBackdropCard .cardContent::after {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.75) 100%);
-}
 
 /* progress: small white capsule (Apple's "▶ ━━ 2h 9m") */
-.itemProgressBar {
+html:not(.layout-tv) .itemProgressBar {
   height: 4px !important;
   border-radius: 999px !important;
   background: rgba(255, 255, 255, 0.32) !important;
   overflow: hidden;
 }
-.itemProgressBarForeground,
-.itemProgressBar .MuiLinearProgress-bar {
+html:not(.layout-tv) .itemProgressBarForeground,
+html:not(.layout-tv) .itemProgressBar .MuiLinearProgress-bar {
   background: #fff !important;
   border-radius: 999px !important;
 }
-.innerCardFooter {
+html:not(.layout-tv) .innerCardFooter {
   background: transparent !important;
   padding: 0 !important;
   overflow: visible !important;
   z-index: 2;
 }
-.cardScalable .MuiLinearProgress-bar { background: #fff !important; border-radius: 999px; }
+html:not(.layout-tv) .cardScalable .MuiLinearProgress-bar { background: #fff !important; border-radius: 999px; }
 
 /* landscape: "▶ ━━ 1982" row exactly like Apple's resume tiles */
-.backdropCard .cardScalable .itemProgressBar,
-.overflowBackdropCard .cardScalable .itemProgressBar,
-.smallBackdropCard .cardScalable .itemProgressBar {
+html:not(.layout-tv) .backdropCard .cardScalable .itemProgressBar,
+html:not(.layout-tv) .overflowBackdropCard .cardScalable .itemProgressBar,
+html:not(.layout-tv) .smallBackdropCard .cardScalable .itemProgressBar {
   position: absolute !important;
   left: 33px !important;
   right: auto !important;
@@ -685,12 +699,12 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   width: 40px !important;
   margin: 0 !important;
 }
-.backdropCard[data-positionticks] .cardText.cardText-secondary,
-.overflowBackdropCard[data-positionticks] .cardText.cardText-secondary,
-.smallBackdropCard[data-positionticks] .cardText.cardText-secondary { padding-left: 16px !important; }
-.backdropCard[data-positionticks] .cardText.cardText-secondary::before,
-.overflowBackdropCard[data-positionticks] .cardText.cardText-secondary::before,
-.smallBackdropCard[data-positionticks] .cardText.cardText-secondary::before {
+html:not(.layout-tv) .backdropCard[data-positionticks] .cardText.cardText-secondary,
+html:not(.layout-tv) .overflowBackdropCard[data-positionticks] .cardText.cardText-secondary,
+html:not(.layout-tv) .smallBackdropCard[data-positionticks] .cardText.cardText-secondary { padding-left: 16px !important; }
+html:not(.layout-tv) .backdropCard[data-positionticks] .cardText.cardText-secondary::before,
+html:not(.layout-tv) .overflowBackdropCard[data-positionticks] .cardText.cardText-secondary::before,
+html:not(.layout-tv) .smallBackdropCard[data-positionticks] .cardText.cardText-secondary::before {
   content: "\25B6";
   display: inline-block;
   font-size: 10px;
@@ -699,18 +713,18 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   vertical-align: 1px;
 }
 /* posters keep a slim full-width bar along the bottom edge */
-.portraitCard .cardScalable .itemProgressBar,
-.overflowPortraitCard .cardScalable .itemProgressBar,
-.squareCard .cardScalable .itemProgressBar {
+html:not(.layout-tv) .portraitCard .cardScalable .itemProgressBar,
+html:not(.layout-tv) .overflowPortraitCard .cardScalable .itemProgressBar,
+html:not(.layout-tv) .squareCard .cardScalable .itemProgressBar {
   margin: 0 10px 10px !important;
 }
 
 /* library tiles already carry their name in the artwork */
-.card[data-type="CollectionFolder"]:has(.cardImageContainer[style*="url("]) .cardText { display: none !important; }
+html:not(.layout-tv) .card[data-type="CollectionFolder"]:has(.cardImageContainer[style*="url("]) .cardText { display: none !important; }
 
 /* status badges */
-.playedIndicator,
-.countIndicator {
+html:not(.layout-tv) .playedIndicator,
+html:not(.layout-tv) .countIndicator {
   background: rgba(30, 30, 32, 0.55) !important;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -721,19 +735,19 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   font-size: 13px !important;
   font-weight: 600;
 }
-.playedIndicator .material-icons,
-.playedIndicator svg { font-size: 17px !important; }
+html:not(.layout-tv) .playedIndicator .material-icons,
+html:not(.layout-tv) .playedIndicator svg { font-size: 17px !important; }
 
 /* hover overlay controls → glass */
-.cardOverlayContainer {
+html:not(.layout-tv) .cardOverlayContainer {
   background: transparent !important;
 }
-.cardOverlayContainer > a.cardImageContainer { background: rgba(0, 0, 0, 0.12) !important; }
-.cardOverlayButton {
+html:not(.layout-tv) .cardOverlayContainer > a.cardImageContainer { background: rgba(0, 0, 0, 0.12) !important; }
+html:not(.layout-tv) .cardOverlayButton {
   color: #fff !important;
   border-radius: 999px !important;
 }
-.cardOverlayButton.cardOverlayFab-primary {
+html:not(.layout-tv) .cardOverlayButton.cardOverlayFab-primary {
   width: 56px !important;
   height: 56px !important;
   padding: 0 !important;
@@ -743,10 +757,10 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow) !important;
   border: 0 !important;
 }
-.cardOverlayButton.cardOverlayFab-primary:hover { background: var(--jtv-glass-hover) !important; }
-.cardOverlayFab-primary svg,
-.cardOverlayFab-primary .material-icons { font-size: 30px !important; }
-.cardOverlayButton-br {
+html:not(.layout-tv) .cardOverlayButton.cardOverlayFab-primary:hover { background: var(--jtv-glass-hover) !important; }
+html:not(.layout-tv) .cardOverlayFab-primary svg,
+html:not(.layout-tv) .cardOverlayFab-primary .material-icons { font-size: 30px !important; }
+html:not(.layout-tv) .cardOverlayButton-br {
   gap: 2px;
   padding: 2px;
   border-radius: 999px !important;
@@ -755,21 +769,21 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   backdrop-filter: blur(16px) saturate(160%);
   box-shadow: var(--jtv-glass-rim);
 }
-.cardOverlayButton-br .cardOverlayButton {
+html:not(.layout-tv) .cardOverlayButton-br .cardOverlayButton {
   width: 32px !important;
   height: 32px !important;
   padding: 6px !important;
   border: 0 !important;
   background: transparent !important;
 }
-.cardOverlayButton-br .cardOverlayButton:hover { background: rgba(255, 255, 255, 0.14) !important; }
-.cardOverlayButton-br svg,
-.cardOverlayButton-br .material-icons { font-size: 19px !important; }
+html:not(.layout-tv) .cardOverlayButton-br .cardOverlayButton:hover { background: rgba(255, 255, 255, 0.14) !important; }
+html:not(.layout-tv) .cardOverlayButton-br svg,
+html:not(.layout-tv) .cardOverlayButton-br .material-icons { font-size: 19px !important; }
 
 /* ───────────────────────── Buttons & form controls ───────────────────────── */
 
-.emby-button.raised,
-.raised {
+html:not(.layout-tv) .emby-button.raised,
+html:not(.layout-tv) .raised {
   border-radius: 999px !important;
   text-transform: none !important;
   font-weight: 600 !important;
@@ -779,56 +793,51 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   background: var(--jtv-fill-2) !important;
   color: #fff !important;
 }
-.raised.button-submit,
-.emby-button.button-submit {
+html:not(.layout-tv) .raised.button-submit,
+html:not(.layout-tv) .emby-button.button-submit {
   background: var(--jtv-accent) !important;
   color: #fff !important;
 }
-.raised:hover { filter: brightness(1.12); }
-.layout-tv .raised:focus {
-  background: #fff !important;
-  color: #000 !important;
-  transform: scale(1.04);
-}
+html:not(.layout-tv) .raised:hover { filter: brightness(1.12); }
 
-.emby-input,
-.emby-textarea,
-.emby-select,
-.MuiOutlinedInput-root,
-.MuiFilledInput-root {
+html:not(.layout-tv) .emby-input,
+html:not(.layout-tv) .emby-textarea,
+html:not(.layout-tv) .emby-select,
+html:not(.layout-tv) .MuiOutlinedInput-root,
+html:not(.layout-tv) .MuiFilledInput-root {
   background: var(--jtv-fill) !important;
   border: 1px solid transparent !important;
   border-radius: 10px !important;
   color: #fff !important;
   box-shadow: none !important;
 }
-.emby-input:focus,
-.emby-textarea:focus,
-.emby-select:focus,
-.MuiOutlinedInput-root.Mui-focused {
+html:not(.layout-tv) .emby-input:focus,
+html:not(.layout-tv) .emby-textarea:focus,
+html:not(.layout-tv) .emby-select:focus,
+html:not(.layout-tv) .MuiOutlinedInput-root.Mui-focused {
   border-color: var(--jtv-accent) !important;
   box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.35) !important;
 }
-.MuiOutlinedInput-notchedOutline { border: 0 !important; }
-.inputLabel,
-.selectLabel { color: var(--jtv-label-2) !important; }
+html:not(.layout-tv) .MuiOutlinedInput-notchedOutline { border: 0 !important; }
+html:not(.layout-tv) .inputLabel,
+html:not(.layout-tv) .selectLabel { color: var(--jtv-label-2) !important; }
 
-.emby-checkbox:checked + span + .checkboxOutline {
+html:not(.layout-tv) .emby-checkbox:checked + span + .checkboxOutline {
   background-color: var(--jtv-accent) !important;
   border-color: var(--jtv-accent) !important;
 }
-.checkboxOutline { border-radius: 6px !important; }
-.MuiCheckbox-root.Mui-checked,
-.MuiSwitch-switchBase.Mui-checked { color: var(--jtv-accent) !important; }
-.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track { background-color: #30d158 !important; opacity: 1 !important; }
+html:not(.layout-tv) .checkboxOutline { border-radius: 6px !important; }
+html:not(.layout-tv) .MuiCheckbox-root.Mui-checked,
+html:not(.layout-tv) .MuiSwitch-switchBase.Mui-checked { color: var(--jtv-accent) !important; }
+html:not(.layout-tv) .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track { background-color: #30d158 !important; opacity: 1 !important; }
 
 /* ───────────────────────── Menus, dialogs, sheets (glass panels) ───────────────────────── */
 
-.MuiMenu-paper,
-.MuiPopover-paper,
-.actionSheet,
-.MuiDialog-paper,
-.dialog:not(.dialog-fullscreen) {
+html:not(.layout-tv) .MuiMenu-paper,
+html:not(.layout-tv) .MuiPopover-paper,
+html:not(.layout-tv) .actionSheet,
+html:not(.layout-tv) .MuiDialog-paper,
+html:not(.layout-tv) .dialog:not(.dialog-fullscreen) {
   background: var(--jtv-glass-strong) !important;
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   backdrop-filter: blur(40px) saturate(180%);
@@ -837,30 +846,30 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
   color: #fff !important;
   background-image: none !important;
 }
-.actionSheetContent { background: transparent !important; box-shadow: none !important; }
-.MuiMenu-list { padding: 6px !important; }
-.MuiMenuItem-root,
-.actionSheetMenuItem {
+html:not(.layout-tv) .actionSheetContent { background: transparent !important; box-shadow: none !important; }
+html:not(.layout-tv) .MuiMenu-list { padding: 6px !important; }
+html:not(.layout-tv) .MuiMenuItem-root,
+html:not(.layout-tv) .actionSheetMenuItem {
   border-radius: 8px !important;
   min-height: 0 !important;
   font-size: 15px !important;
 }
-.MuiMenuItem-root { padding: 7px 12px !important; }
-.MuiMenuItem-root:hover,
-.actionSheetMenuItem:hover,
-.MuiMenuItem-root.Mui-focusVisible { background: var(--jtv-accent) !important; }
-.MuiMenu-paper .MuiListItemIcon-root { color: inherit !important; min-width: 30px !important; }
-.MuiMenu-paper .MuiDivider-root { border-color: rgba(255, 255, 255, 0.1) !important; margin: 5px 8px !important; }
-.MuiBackdrop-root:not(.MuiBackdrop-invisible),
-.dialogBackdropOpened { background: rgba(0, 0, 0, 0.45) !important; }
-.formDialogHeader,
-.dialogHeader { background: transparent !important; }
-.MuiTooltip-tooltip {
+html:not(.layout-tv) .MuiMenuItem-root { padding: 7px 12px !important; }
+html:not(.layout-tv) .MuiMenuItem-root:hover,
+html:not(.layout-tv) .actionSheetMenuItem:hover,
+html:not(.layout-tv) .MuiMenuItem-root.Mui-focusVisible { background: var(--jtv-accent) !important; }
+html:not(.layout-tv) .MuiMenu-paper .MuiListItemIcon-root { color: inherit !important; min-width: 30px !important; }
+html:not(.layout-tv) .MuiMenu-paper .MuiDivider-root { border-color: rgba(255, 255, 255, 0.1) !important; margin: 5px 8px !important; }
+html:not(.layout-tv) .MuiBackdrop-root:not(.MuiBackdrop-invisible),
+html:not(.layout-tv) .dialogBackdropOpened { background: rgba(0, 0, 0, 0.45) !important; }
+html:not(.layout-tv) .formDialogHeader,
+html:not(.layout-tv) .dialogHeader { background: transparent !important; }
+html:not(.layout-tv) .MuiTooltip-tooltip {
   background: rgba(50, 50, 52, 0.92) !important;
   border-radius: 8px !important;
   font-size: 12px !important;
 }
-.toast {
+html:not(.layout-tv) .toast {
   background: var(--jtv-glass-strong) !important;
   -webkit-backdrop-filter: blur(30px);
   backdrop-filter: blur(30px);
@@ -873,12 +882,12 @@ body:has(#indexPage:not(.hide)) .MuiAppBar-root .MuiStack-root:not(:has(.MuiButt
 
 /* The page is transparent so Jellyfin's fixed backdrop layer becomes the hero;
    content then scrolls up over it the way the Apple TV hero does. */
-.itemDetailPage { background: transparent !important; }
-.backgroundContainer.withBackdrop { background-color: rgba(0, 0, 0, 0.35) !important; }
-body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { background-color: transparent !important; }
-.backdropImage { background-position: center top !important; }
+html:not(.layout-tv) .itemDetailPage { background: transparent !important; }
+html:not(.layout-tv) .backgroundContainer.withBackdrop { background-color: rgba(0, 0, 0, 0.35) !important; }
+html:not(.layout-tv) body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { background-color: transparent !important; }
+html:not(.layout-tv) .backdropImage { background-position: center top !important; }
 
-.itemDetailPage .itemBackdrop {
+html:not(.layout-tv) .itemDetailPage .itemBackdrop {
   height: 82vh !important;
   min-height: 460px;
   /* filled by Jellyfin only on mobile layout (iPhone/iPad Safari); otherwise empty */
@@ -889,7 +898,7 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
   margin-top: 0 !important;
   position: relative;
 }
-.itemDetailPage .itemBackdrop::after {
+html:not(.layout-tv) .itemDetailPage .itemBackdrop::after {
   content: "";
   position: absolute;
   top: -80px; left: 0; right: 0; bottom: 0;
@@ -898,19 +907,19 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
     linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.6) 76%, #000 100%);
   pointer-events: none;
 }
-.itemDetailPage .detailPageWrapperContainer {
+html:not(.layout-tv) .itemDetailPage .detailPageWrapperContainer {
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, #000 220px) !important;
 }
-.itemDetailPage .detailPageSecondaryContainer {
+html:not(.layout-tv) .itemDetailPage .detailPageSecondaryContainer {
   background: var(--jtv-bg-elevated) !important;
   margin-top: 0 !important;
   padding-top: 26px !important;
   padding-bottom: 40px;
   min-height: 40vh;
 }
-.itemDetailPage .detailPagePrimaryContent .itemDetailsGroup { padding-bottom: 28px; }
+html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContent .itemDetailsGroup { padding-bottom: 28px; }
 /* seasons / next up rows start the gray canvas, full-bleed */
-.itemDetailPage .detailPagePrimaryContent .detailVerticalSection {
+html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContent .detailVerticalSection {
   background: var(--jtv-bg-elevated);
   box-shadow: 0 0 0 100vmax var(--jtv-bg-elevated);
   -webkit-clip-path: inset(0 -100vmax);
@@ -918,24 +927,14 @@ body:has(.itemDetailPage:not(.hide)) .backgroundContainer.withBackdrop { backgro
   padding-top: 26px;
   margin: 0 0 -1px !important;
 }
-.playstatebutton-icon-played,
-.itemDetailPage .mainDetailButtons .playstatebutton-icon-played { color: #fff !important; }
+html:not(.layout-tv) .playstatebutton-icon-played,
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .playstatebutton-icon-played { color: #fff !important; }
 
 /* Jellyfin hides .detailLogo on mobile/TV layouts; the theme always shows it when one exists */
 html:not(.layout-tv) .itemDetailPage .detailLogo:not(.hide) { display: block !important; }
 
-/* Jellyfin's TV CSS hides the banner box; the hero layout needs it as the spacer the info overlaps */
-.layout-tv .itemDetailPage .itemBackdrop { display: block !important; }
-/* …but when Backdrops are off on the TV (Settings › Display) there is no art to show:
-   collapse the hero instead of leaving a black void */
-.layout-tv .backgroundContainer:not(.withBackdrop) ~ .mainAnimatedPages .itemDetailPage .itemBackdrop {
-  height: 330px !important;
-  min-height: 0 !important;
-}
-.layout-tv .backgroundContainer:not(.withBackdrop) ~ .mainAnimatedPages .itemDetailPage .detailLogo { display: none !important; }
-
 /* title art goes bottom-left like Apple TV */
-.itemDetailPage .detailLogo {
+html:not(.layout-tv) .itemDetailPage .detailLogo {
   position: absolute !important;
   top: calc(82vh - 360px) !important;
   left: 3.3% !important;
@@ -950,12 +949,12 @@ html:not(.layout-tv) .itemDetailPage .detailLogo:not(.hide) { display: block !im
   filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.45));
 }
 
-.itemDetailPage .detailPageWrapperContainer {
+html:not(.layout-tv) .itemDetailPage .detailPageWrapperContainer {
   margin-top: -220px !important;
   position: relative;
   z-index: 2;
 }
-.itemDetailPage .detailPagePrimaryContainer {
+html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer {
   display: block !important;
   background: transparent !important;
   padding-left: 3.3% !important;
@@ -963,9 +962,9 @@ html:not(.layout-tv) .itemDetailPage .detailLogo:not(.hide) { display: block !im
   padding-right: 3.3% !important;
   padding-right: max(24px, 3.3%) !important;
 }
-.itemDetailPage .detailImageContainer { display: none !important; }
+html:not(.layout-tv) .itemDetailPage .detailImageContainer { display: none !important; }
 
-.itemDetailPage .detailRibbon {
+html:not(.layout-tv) .itemDetailPage .detailRibbon {
   display: flex !important;
   flex-direction: column;
   align-items: flex-start !important;
@@ -975,12 +974,12 @@ html:not(.layout-tv) .itemDetailPage .detailLogo:not(.hide) { display: block !im
   margin: 0 !important;
   padding: 0 !important;
 }
-.itemDetailPage .infoWrapper { padding: 0 !important; width: 100%; }
+html:not(.layout-tv) .itemDetailPage .infoWrapper { padding: 0 !important; width: 100%; }
 
-.itemDetailPage .nameContainer { margin: 0 0 6px !important; text-align: left !important; }
-.itemDetailPage .itemName,
-.itemDetailPage .parentName { text-align: inherit !important; }
-.itemDetailPage .itemName {
+html:not(.layout-tv) .itemDetailPage .nameContainer { margin: 0 0 6px !important; text-align: left !important; }
+html:not(.layout-tv) .itemDetailPage .itemName,
+html:not(.layout-tv) .itemDetailPage .parentName { text-align: inherit !important; }
+html:not(.layout-tv) .itemDetailPage .itemName {
   font-size: 34px !important;
   font-weight: 700 !important;
   letter-spacing: -0.025em;
@@ -988,28 +987,28 @@ html:not(.layout-tv) .itemDetailPage .detailLogo:not(.hide) { display: block !im
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   margin: 0 !important;
 }
-.itemDetailPage .itemName.subtitle,
-.itemDetailPage .itemName.infoText { padding-left: 0 !important; margin-left: 0 !important; }
-.itemDetailPage .itemName.subtitle { font-size: 28px !important; }
-.itemDetailPage .parentName { font-size: 18px !important; font-weight: 600 !important; margin: 0 0 2px !important; }
-.itemDetailPage .parentName .button-link { color: rgba(255, 255, 255, 0.86) !important; }
+html:not(.layout-tv) .itemDetailPage .itemName.subtitle,
+html:not(.layout-tv) .itemDetailPage .itemName.infoText { padding-left: 0 !important; margin-left: 0 !important; }
+html:not(.layout-tv) .itemDetailPage .itemName.subtitle { font-size: 28px !important; }
+html:not(.layout-tv) .itemDetailPage .parentName { font-size: 18px !important; font-weight: 600 !important; margin: 0 0 2px !important; }
+html:not(.layout-tv) .itemDetailPage .parentName .button-link { color: rgba(255, 255, 255, 0.86) !important; }
 html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .parentName { display: none !important; }
 
-.itemDetailPage .itemMiscInfo {
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo {
   justify-content: flex-start !important;
   font-size: 15px !important;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.82) !important;
   margin: 2px 0 !important;
 }
-.itemDetailPage .itemMiscInfo .mediaInfoItem { margin-right: 0 !important; }
-.itemDetailPage .itemMiscInfo .mediaInfoItem + .mediaInfoItem:not(.mediaInfoCriticRating):not(.mediaInfoOfficialRating)::before {
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo .mediaInfoItem { margin-right: 0 !important; }
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo .mediaInfoItem + .mediaInfoItem:not(.mediaInfoCriticRating):not(.mediaInfoOfficialRating)::before {
   content: "·";
   margin: 0 0.45em;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 700;
 }
-.mediaInfoOfficialRating {
+html:not(.layout-tv) .mediaInfoOfficialRating {
   border: 1.5px solid rgba(255, 255, 255, 0.72) !important;
   border-radius: 4px !important;
   padding: 0 4px !important;
@@ -1019,14 +1018,14 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   background: transparent !important;
   color: rgba(255, 255, 255, 0.85) !important;
 }
-.itemDetailPage .itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating::before,
-.itemDetailPage .itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating + .mediaInfoItem::before { content: none !important; }
-.itemDetailPage .itemMiscInfo .mediaInfoOfficialRating { margin-left: 0.6em !important; margin-right: 0.6em !important; }
-.itemDetailPage .itemMiscInfo .mediaInfoCriticRating { margin-left: 0.7em !important; }
-.starIcon { color: #ffd60a !important; }
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating::before,
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating + .mediaInfoItem::before { content: none !important; }
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo .mediaInfoOfficialRating { margin-left: 0.6em !important; margin-right: 0.6em !important; }
+html:not(.layout-tv) .itemDetailPage .itemMiscInfo .mediaInfoCriticRating { margin-left: 0.7em !important; }
+html:not(.layout-tv) .starIcon { color: #ffd60a !important; }
 
 /* Play = white pill, everything else = glass circles */
-.itemDetailPage .mainDetailButtons {
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons {
   margin: 18px 0 6px !important;
   padding-left: 0 !important;  /* mobile layout indents this row for a poster the theme hides */
   padding-right: 0 !important;
@@ -1034,8 +1033,8 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   align-items: center;
   justify-content: flex-start !important;
 }
-.itemDetailPage .mainDetailButtons .detailButton + .detailButton { margin-left: 14px !important; }
-.itemDetailPage .mainDetailButtons .detailButton {
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton + .detailButton { margin-left: 14px !important; }
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton {
   margin: 0 !important;
   width: 48px;
   height: 48px;
@@ -1048,10 +1047,10 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   color: #fff !important;
   transition: transform 0.25s var(--jtv-ease), background-color 0.25s;
 }
-.itemDetailPage .mainDetailButtons .detailButton:hover { background: var(--jtv-glass-hover) !important; transform: scale(1.05); }
-.itemDetailPage .mainDetailButtons .detailButton-content { padding: 0 !important; display: flex; flex-direction: row !important; align-items: center; justify-content: center; height: 100%; }
-.itemDetailPage .mainDetailButtons .detailButton-icon { font-size: 24px !important; }
-.itemDetailPage .mainDetailButtons .btnPlay {
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton:hover { background: var(--jtv-glass-hover) !important; transform: scale(1.05); }
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton-content { padding: 0 !important; display: flex; flex-direction: row !important; align-items: center; justify-content: center; height: 100%; }
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton-icon { font-size: 24px !important; }
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .btnPlay {
   width: auto;
   min-width: 190px;
   height: 52px;
@@ -1060,23 +1059,18 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   color: #000 !important;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
 }
-.itemDetailPage .mainDetailButtons .btnPlay:hover { background: #ececf0 !important; transform: scale(1.03); }
-.itemDetailPage .mainDetailButtons .btnPlay .detailButton-icon { font-size: 32px !important; }
-.itemDetailPage .mainDetailButtons .btnPlay .detailButton-content::after {
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .btnPlay:hover { background: #ececf0 !important; transform: scale(1.03); }
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .btnPlay .detailButton-icon { font-size: 32px !important; }
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .btnPlay .detailButton-content::after {
   content: "Play";
   margin-left: 8px;
   font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.itemDetailPage .mainDetailButtons .detailButton-text { display: none !important; }
-.layout-tv .itemDetailPage .mainDetailButtons .detailButton:focus {
-  background: #fff !important;
-  color: #000 !important;
-  transform: scale(1.12);
-}
+html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton-text { display: none !important; }
 
-.itemDetailPage .detailPagePrimaryContent { background: transparent !important; }
+html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContent { background: transparent !important; }
 
 /* logo art replaces the plain-text title (desktop browsers with :has) */
 html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRibbon .nameContainer .itemName.parentNameLast {
@@ -1087,63 +1081,63 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
 }
 
 /* Cast & Crew: circular portraits, centered captions (Apple TV) */
-#castCollapsible .card,
-#guestCastCollapsible .card { width: 132px !important; }
-#castCollapsible .cardPadder,
-#guestCastCollapsible .cardPadder { padding-bottom: 100% !important; }
-#castCollapsible .cardScalable,
-#guestCastCollapsible .cardScalable { border-radius: 50% !important; }
-#castCollapsible .cardText,
-#guestCastCollapsible .cardText { text-align: center !important; padding-left: 0 !important; }
-#castCollapsible .cardText-first,
-#guestCastCollapsible .cardText-first { margin-top: 6px; font-size: 13px !important; }
-#castCollapsible .cardText-secondary,
-#guestCastCollapsible .cardText-secondary { font-size: 12px !important; }
-.itemDetailPage .detailPagePrimaryContent { padding-left: 0 !important; }
-.itemDetailPage .detailSectionContent { max-width: 760px; }
-.itemDetailPage .tagline {
+html:not(.layout-tv) #castCollapsible .card,
+html:not(.layout-tv) #guestCastCollapsible .card { width: 132px !important; }
+html:not(.layout-tv) #castCollapsible .cardPadder,
+html:not(.layout-tv) #guestCastCollapsible .cardPadder { padding-bottom: 100% !important; }
+html:not(.layout-tv) #castCollapsible .cardScalable,
+html:not(.layout-tv) #guestCastCollapsible .cardScalable { border-radius: 50% !important; }
+html:not(.layout-tv) #castCollapsible .cardText,
+html:not(.layout-tv) #guestCastCollapsible .cardText { text-align: center !important; padding-left: 0 !important; }
+html:not(.layout-tv) #castCollapsible .cardText-first,
+html:not(.layout-tv) #guestCastCollapsible .cardText-first { margin-top: 6px; font-size: 13px !important; }
+html:not(.layout-tv) #castCollapsible .cardText-secondary,
+html:not(.layout-tv) #guestCastCollapsible .cardText-secondary { font-size: 12px !important; }
+html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContent { padding-left: 0 !important; }
+html:not(.layout-tv) .itemDetailPage .detailSectionContent { max-width: 760px; }
+html:not(.layout-tv) .itemDetailPage .tagline {
   font-size: 17px !important;
   font-weight: 600 !important;
   color: #fff !important;
   margin: 10px 0 4px !important;
 }
-.itemDetailPage .overview {
+html:not(.layout-tv) .itemDetailPage .overview {
   font-size: 15px !important;
   line-height: 1.45 !important;
   color: rgba(255, 255, 255, 0.78) !important;
 }
-.itemDetailPage .itemTags,
-.itemDetailPage .itemExternalLinks,
-.itemDetailPage .itemGenres { font-size: 13px !important; color: var(--jtv-label-2) !important; }
-.itemDetailPage .button-link,
-.itemDetailPage .itemTags .button-link,
-.itemDetailPage .itemExternalLinks .button-link { color: rgba(255, 255, 255, 0.86) !important; font-weight: 500 !important; }
-.itemDetailPage .itemDetailsGroup .label,
-.itemDetailPage .detailsGroupItem .label { color: var(--jtv-label-2) !important; font-size: 14px; }
+html:not(.layout-tv) .itemDetailPage .itemTags,
+html:not(.layout-tv) .itemDetailPage .itemExternalLinks,
+html:not(.layout-tv) .itemDetailPage .itemGenres { font-size: 13px !important; color: var(--jtv-label-2) !important; }
+html:not(.layout-tv) .itemDetailPage .button-link,
+html:not(.layout-tv) .itemDetailPage .itemTags .button-link,
+html:not(.layout-tv) .itemDetailPage .itemExternalLinks .button-link { color: rgba(255, 255, 255, 0.86) !important; font-weight: 500 !important; }
+html:not(.layout-tv) .itemDetailPage .itemDetailsGroup .label,
+html:not(.layout-tv) .itemDetailPage .detailsGroupItem .label { color: var(--jtv-label-2) !important; font-size: 14px; }
 
-.itemDetailPage .trackSelections .selectLabel { font-size: 13px !important; font-weight: 600; }
-.itemDetailPage .trackSelections .detailTrackSelect {
+html:not(.layout-tv) .itemDetailPage .trackSelections .selectLabel { font-size: 13px !important; font-weight: 600; }
+html:not(.layout-tv) .itemDetailPage .trackSelections .detailTrackSelect {
   background: transparent !important;
   font-size: 13px !important;
   color: rgba(255, 255, 255, 0.82) !important;
 }
 
-.itemDetailPage .listItem {
+html:not(.layout-tv) .itemDetailPage .listItem {
   border-radius: 12px !important;
   background: transparent !important;
   transition: background-color 0.2s;
 }
-.itemDetailPage .listItem:hover { background: rgba(255, 255, 255, 0.05) !important; }
-.listItemImage {
+html:not(.layout-tv) .itemDetailPage .listItem:hover { background: rgba(255, 255, 255, 0.05) !important; }
+html:not(.layout-tv) .listItemImage {
   border-radius: 10px !important;
   overflow: hidden;
   box-shadow: var(--jtv-hairline);
 }
-.listItemBodyText.secondary { color: var(--jtv-label-2) !important; }
+html:not(.layout-tv) .listItemBodyText.secondary { color: var(--jtv-label-2) !important; }
 
 /* Season episodes: Apple TV horizontal episode cards
    (title, synopsis and "▶ 43m" overlaid on a frosted fade) */
-#listChildrenCollapsible .itemsContainer.vertical-list {
+html:not(.layout-tv) #listChildrenCollapsible .itemsContainer.vertical-list {
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
@@ -1154,7 +1148,7 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   scroll-padding-left: 3.3%;
   scroll-padding-left: max(24px, 3.3%);
 }
-#listChildrenCollapsible .listItem {
+html:not(.layout-tv) #listChildrenCollapsible .listItem {
   flex: 0 0 auto;
   position: relative;
   width: 25.5vw;
@@ -1173,7 +1167,7 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   scroll-snap-align: start;
   transition: transform 0.45s var(--jtv-ease), box-shadow 0.45s var(--jtv-ease);
 }
-#listChildrenCollapsible .listItem::after {
+html:not(.layout-tv) #listChildrenCollapsible .listItem::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -1182,23 +1176,19 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   pointer-events: none;
   z-index: 4;
 }
-.layout-desktop #listChildrenCollapsible .listItem:hover {
+html.layout-desktop:not(.layout-tv) #listChildrenCollapsible .listItem:hover {
   transform: scale(1.025);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
   background: #1c1c1e !important;
 }
-.layout-tv #listChildrenCollapsible .listItem:focus {
-  transform: scale(1.06);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-}
-#listChildrenCollapsible .listItem-content {
+html:not(.layout-tv) #listChildrenCollapsible .listItem-content {
   position: absolute !important;
   top: 0; left: 0; right: 0; bottom: 0;
   display: block !important;
   padding: 0 !important;
   margin: 0 !important;
 }
-#listChildrenCollapsible .listItemImage {
+html:not(.layout-tv) #listChildrenCollapsible .listItemImage {
   position: absolute !important;
   top: 0; left: 0;
   width: 100% !important;
@@ -1209,7 +1199,7 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   background-size: cover !important;
   background-position: center !important;
 }
-#listChildrenCollapsible .listItemImageButton {
+html:not(.layout-tv) #listChildrenCollapsible .listItemImageButton {
   width: 54px !important;
   height: 54px !important;
   padding: 0 !important;
@@ -1224,16 +1214,16 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   z-index: 3;
   transition: opacity 0.25s var(--jtv-ease);
 }
-#listChildrenCollapsible .listItem:hover .listItemImageButton,
-#listChildrenCollapsible .listItemImageButton:focus { opacity: 1; }
-#listChildrenCollapsible .listItemImageButton .material-icons { font-size: 30px !important; }
-#listChildrenCollapsible .listItemIndicators {
+html:not(.layout-tv) #listChildrenCollapsible .listItem:hover .listItemImageButton,
+html:not(.layout-tv) #listChildrenCollapsible .listItemImageButton:focus { opacity: 1; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemImageButton .material-icons { font-size: 30px !important; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemIndicators {
   top: 10px !important;
   right: auto !important;
   left: 10px !important;
 }
-#listChildrenCollapsible .listItemImage .itemProgressBar,
-#listChildrenCollapsible .listItemImage .innerCardFooter {
+html:not(.layout-tv) #listChildrenCollapsible .listItemImage .itemProgressBar,
+html:not(.layout-tv) #listChildrenCollapsible .listItemImage .innerCardFooter {
   position: absolute !important;
   left: 0 !important; right: 0 !important; bottom: 0 !important;
   width: auto !important;
@@ -1242,7 +1232,7 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   z-index: 3;
 }
 
-#listChildrenCollapsible .listItemBody {
+html:not(.layout-tv) #listChildrenCollapsible .listItemBody {
   position: absolute !important;
   left: 0; right: 0; bottom: 0;
   z-index: 2;
@@ -1255,7 +1245,7 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   box-sizing: border-box;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
 }
-#listChildrenCollapsible .listItemBody::before {
+html:not(.layout-tv) #listChildrenCollapsible .listItemBody::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -1267,25 +1257,21 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   mask-image: linear-gradient(to bottom, transparent 0%, #000 50%);
   pointer-events: none;
 }
-.layout-tv #listChildrenCollapsible .listItemBody::before {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-#listChildrenCollapsible .listItemBodyText {
+html:not(.layout-tv) #listChildrenCollapsible .listItemBodyText {
   margin: 0 !important;
   padding: 0 !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#listChildrenCollapsible .listItemBodyText:first-child {
+html:not(.layout-tv) #listChildrenCollapsible .listItemBodyText:first-child {
   order: 1;
   font-size: 17px !important;
   font-weight: 600 !important;
   color: #fff !important;
   margin-bottom: 2px !important;
 }
-#listChildrenCollapsible .listItem-overview {
+html:not(.layout-tv) #listChildrenCollapsible .listItem-overview {
   order: 2;
   display: -webkit-box !important;
   -webkit-box-orient: vertical;
@@ -1295,8 +1281,8 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   line-height: 1.3 !important;
   color: rgba(255, 255, 255, 0.82) !important;
 }
-#listChildrenCollapsible .listItem-overview p { margin: 0 !important; display: inline; }
-#listChildrenCollapsible .listItemMediaInfo {
+html:not(.layout-tv) #listChildrenCollapsible .listItem-overview p { margin: 0 !important; display: inline; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemMediaInfo {
   order: 3;
   display: flex !important;
   align-items: center;
@@ -1305,16 +1291,16 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   font-weight: 600 !important;
   color: #fff !important;
 }
-#listChildrenCollapsible .listItemMediaInfo::before {
+html:not(.layout-tv) #listChildrenCollapsible .listItemMediaInfo::before {
   content: "\25B6";
   font-size: 10px;
   margin-right: 7px;
 }
-#listChildrenCollapsible .listItemMediaInfo .endsAt,
-#listChildrenCollapsible .listItem-bottomoverview { display: none !important; }
-#listChildrenCollapsible .listItemMediaInfo .mediaInfoItem { margin-right: 0.6em !important; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemMediaInfo .endsAt,
+html:not(.layout-tv) #listChildrenCollapsible .listItem-bottomoverview { display: none !important; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemMediaInfo .mediaInfoItem { margin-right: 0.6em !important; }
 
-#listChildrenCollapsible .listViewUserDataButtons {
+html:not(.layout-tv) #listChildrenCollapsible .listViewUserDataButtons {
   position: absolute !important;
   top: 8px;
   right: 8px;
@@ -1329,11 +1315,10 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   opacity: 0;
   transition: opacity 0.25s var(--jtv-ease);
 }
-#listChildrenCollapsible .listItem:hover .listViewUserDataButtons,
-#listChildrenCollapsible .listViewUserDataButtons:focus-within,
-.layout-tv #listChildrenCollapsible .listViewUserDataButtons,
-.layout-mobile #listChildrenCollapsible .listViewUserDataButtons { opacity: 1; }
-#listChildrenCollapsible .listItemButton {
+html:not(.layout-tv) #listChildrenCollapsible .listItem:hover .listViewUserDataButtons,
+html:not(.layout-tv) #listChildrenCollapsible .listViewUserDataButtons:focus-within,
+html.layout-mobile:not(.layout-tv) #listChildrenCollapsible .listViewUserDataButtons { opacity: 1; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemButton {
   width: 32px !important;
   height: 32px !important;
   padding: 6px !important;
@@ -1341,19 +1326,19 @@ html:not(.layout-tv) .itemDetailPage:has(> .detailLogo[style*="url("]) .detailRi
   color: #fff !important;
   border-radius: 999px !important;
 }
-#listChildrenCollapsible .listItemButton .material-icons { font-size: 19px !important; }
+html:not(.layout-tv) #listChildrenCollapsible .listItemButton .material-icons { font-size: 19px !important; }
 
 /* ───────────────────────── Home hero carousel (rendered by jellytv-plus.js) ───────────────────────── */
 
 /* "My Media" library tiles are redundant with the tab bar */
-.jtv-hidden-section,
-#indexPage .verticalSection:has(.card[data-type="CollectionFolder"]) { display: none !important; }
+html:not(.layout-tv) .jtv-hidden-section,
+html:not(.layout-tv) #indexPage .verticalSection:has(.card[data-type="CollectionFolder"]) { display: none !important; }
 
 /* the header floats over the hero; its dark scroll band fades in once past it */
-.MuiAppBar-root.MuiAppBar-positionFixed::before { transition: opacity 0.35s ease; }
-html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::before { opacity: 0; }
+html:not(.layout-tv) .MuiAppBar-root.MuiAppBar-positionFixed::before { transition: opacity 0.35s ease; }
+html.jtv-home:not(.jtv-hero-scrolled):not(.layout-tv) .MuiAppBar-root.MuiAppBar-positionFixed::before { opacity: 0; }
 
-.jtv-hero {
+html:not(.layout-tv) .jtv-hero {
   position: relative;
   height: 86vh;
   height: 86svh;
@@ -1365,28 +1350,28 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   background: #000;
   color: #fff;
 }
-.jtv-hero-slides { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
-.jtv-hero-slide {
+html:not(.layout-tv) .jtv-hero-slides { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+html:not(.layout-tv) .jtv-hero-slide {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.9s ease, visibility 0s linear 0.9s;
 }
-.jtv-hero-slide.is-active {
+html:not(.layout-tv) .jtv-hero-slide.is-active {
   opacity: 1;
   visibility: visible;
   z-index: 1;
   transition: opacity 0.9s ease;
 }
-.jtv-hero-bg {
+html:not(.layout-tv) .jtv-hero-bg {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background-size: cover;
   background-position: center 22%;
   cursor: pointer;
 }
-.jtv-hero-scrim {
+html:not(.layout-tv) .jtv-hero-scrim {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background:
@@ -1395,7 +1380,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   cursor: pointer;
 }
 
-.jtv-hero-info {
+html:not(.layout-tv) .jtv-hero-info {
   position: absolute;
   left: 3.3%;
   left: max(24px, 3.3%);
@@ -1405,7 +1390,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   z-index: 2;
   text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35);
 }
-.jtv-hero-badge {
+html:not(.layout-tv) .jtv-hero-badge {
   display: inline-block;
   margin-bottom: 14px;
   padding: 4px 10px;
@@ -1419,7 +1404,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   letter-spacing: 0.005em;
   text-shadow: none;
 }
-.jtv-hero-logo {
+html:not(.layout-tv) .jtv-hero-logo {
   display: block;
   max-width: 480px;
   max-width: min(44vw, 480px);
@@ -1432,7 +1417,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.4));
   cursor: pointer;
 }
-.jtv-hero-title {
+html:not(.layout-tv) .jtv-hero-title {
   margin: 0 0 12px !important;
   font-family: var(--jtv-font-display) !important;
   font-size: 54px !important;
@@ -1441,7 +1426,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   letter-spacing: -0.035em !important;
   cursor: pointer;
 }
-.jtv-hero-meta {
+html:not(.layout-tv) .jtv-hero-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -1449,7 +1434,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   font-weight: 500;
   color: rgba(255, 255, 255, 0.94);
 }
-.jtv-hero-rating {
+html:not(.layout-tv) .jtv-hero-rating {
   margin-left: 12px;
   padding: 0 4px;
   border: 1.5px solid rgba(255, 255, 255, 0.85);
@@ -1459,7 +1444,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   line-height: 15px;
   text-shadow: none;
 }
-.jtv-hero-overview {
+html:not(.layout-tv) .jtv-hero-overview {
   margin: 12px 0 0 !important;
   max-width: 560px;
   font-size: 17px !important;
@@ -1471,17 +1456,17 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   overflow: hidden;
   cursor: pointer;
 }
-.jtv-hero-caption {
+html:not(.layout-tv) .jtv-hero-caption {
   margin: 12px 0 0 !important;
   font-size: 17px !important;
   font-weight: 600 !important;
   color: #fff !important;
 }
-.jtv-hero-caption:empty { display: none; }
-.jtv-hero-caption-new { display: none; }
+html:not(.layout-tv) .jtv-hero-caption:empty { display: none; }
+html:not(.layout-tv) .jtv-hero-caption-new { display: none; }
 
-.jtv-hero-actions { display: flex; align-items: center; margin-top: 22px; }
-.jtv-hero-actions button {
+html:not(.layout-tv) .jtv-hero-actions { display: flex; align-items: center; margin-top: 22px; }
+html:not(.layout-tv) .jtv-hero-actions button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1491,7 +1476,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.25s var(--jtv-ease), background-color 0.25s;
 }
-.jtv-hero-play {
+html:not(.layout-tv) .jtv-hero-play {
   height: 52px;
   min-width: 140px;
   padding: 0 30px 0 24px;
@@ -1503,9 +1488,9 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   letter-spacing: -0.01em;
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
 }
-.jtv-hero-play svg { width: 22px; height: 22px; margin-right: 9px; fill: #000; }
-.jtv-hero-play:hover { background: #ececf0; transform: scale(1.03); }
-.jtv-hero-fav {
+html:not(.layout-tv) .jtv-hero-play svg { width: 22px; height: 22px; margin-right: 9px; fill: #000; }
+html:not(.layout-tv) .jtv-hero-play:hover { background: #ececf0; transform: scale(1.03); }
+html:not(.layout-tv) .jtv-hero-fav {
   width: 52px;
   height: 52px;
   margin-left: 14px;
@@ -1516,12 +1501,12 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
   color: #fff;
 }
-.jtv-hero-fav svg { width: 24px; height: 24px; stroke: #fff; }
-.jtv-hero-fav:hover { background: var(--jtv-glass-hover); transform: scale(1.06); }
-.jtv-hero-actions button:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.7); outline-offset: 3px; }
+html:not(.layout-tv) .jtv-hero-fav svg { width: 24px; height: 24px; stroke: #fff; }
+html:not(.layout-tv) .jtv-hero-fav:hover { background: var(--jtv-glass-hover); transform: scale(1.06); }
+html:not(.layout-tv) .jtv-hero-actions button:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.7); outline-offset: 3px; }
 
 /* page dots: active one stretches into a pill that fills over the slide interval */
-.jtv-hero-dots {
+html:not(.layout-tv) .jtv-hero-dots {
   position: absolute;
   left: 0; right: 0;
   bottom: 28px;
@@ -1530,7 +1515,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   justify-content: center;
   align-items: center;
 }
-.jtv-hero-dot {
+html:not(.layout-tv) .jtv-hero-dot {
   position: relative;
   width: 8px;
   height: 8px;
@@ -1543,8 +1528,8 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   cursor: pointer;
   transition: width 0.35s var(--jtv-ease), background-color 0.35s;
 }
-.jtv-hero-dot.is-active { width: 44px; background: rgba(255, 255, 255, 0.35); }
-.jtv-hero-dot i {
+html:not(.layout-tv) .jtv-hero-dot.is-active { width: 44px; background: rgba(255, 255, 255, 0.35); }
+html:not(.layout-tv) .jtv-hero-dot i {
   position: absolute;
   top: 0; left: 0; bottom: 0;
   width: 100%;
@@ -1553,22 +1538,22 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   transform: scaleX(0);
   transform-origin: left center;
 }
-.jtv-hero-dot.is-active i { animation: jtv-dot-fill var(--jtv-hero-interval, 8000ms) linear forwards; }
+html:not(.layout-tv) .jtv-hero-dot.is-active i { animation: jtv-dot-fill var(--jtv-hero-interval, 8000ms) linear forwards; }
 @keyframes jtv-dot-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* iPad portrait / small laptops */
 @media (max-width: 999px) and (orientation: portrait) {
-  .jtv-hero { height: 70vh; height: 70svh; }
-  .jtv-hero-info { max-width: 80vw; }
+  html:not(.layout-tv) .jtv-hero { height: 70vh; height: 70svh; }
+  html:not(.layout-tv) .jtv-hero-info { max-width: 80vw; }
 }
 
 /* iPhone: centered hero like the iOS app */
 @media (max-width: 600px) {
-  .jtv-hero { height: 76vh; height: 76svh; min-height: 520px; margin-bottom: 14px; }
-  .jtv-hero-scrim {
+  html:not(.layout-tv) .jtv-hero { height: 76vh; height: 76svh; min-height: 520px; margin-bottom: 14px; }
+  html:not(.layout-tv) .jtv-hero-scrim {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.72) 80%, #000 100%);
   }
-  .jtv-hero-info {
+  html:not(.layout-tv) .jtv-hero-info {
     left: 0 !important;
     right: 0;
     bottom: 50px;
@@ -1577,36 +1562,36 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
     padding: 0 22px;
     text-align: center;
   }
-  .jtv-hero-logo { max-width: 76vw; max-height: 100px; margin: 0 auto 14px; object-position: center bottom; }
-  .jtv-hero-title { font-size: 38px !important; }
-  .jtv-hero-meta { justify-content: center; font-size: 16px; }
-  .jtv-hero-overview { display: none; }
+  html:not(.layout-tv) .jtv-hero-logo { max-width: 76vw; max-height: 100px; margin: 0 auto 14px; object-position: center bottom; }
+  html:not(.layout-tv) .jtv-hero-title { font-size: 38px !important; }
+  html:not(.layout-tv) .jtv-hero-meta { justify-content: center; font-size: 16px; }
+  html:not(.layout-tv) .jtv-hero-overview { display: none; }
   /* iPhone shows no floating badge; "New" lives in the gray caption line instead */
-  .jtv-hero-badge { display: none; }
-  .jtv-hero-caption-new { display: inline; }
-  .jtv-hero-caption { font-weight: 500 !important; color: rgba(255, 255, 255, 0.62) !important; font-size: 16px !important; }
-  .jtv-hero-actions { justify-content: center; margin-top: 18px; }
-  .jtv-hero-play { min-width: 0; width: 56vw; max-width: 220px; height: 50px; }
-  .jtv-hero-fav { width: 50px; height: 50px; }
-  .jtv-hero-dots { bottom: 18px; }
+  html:not(.layout-tv) .jtv-hero-badge { display: none; }
+  html:not(.layout-tv) .jtv-hero-caption-new { display: inline; }
+  html:not(.layout-tv) .jtv-hero-caption { font-weight: 500 !important; color: rgba(255, 255, 255, 0.62) !important; font-size: 16px !important; }
+  html:not(.layout-tv) .jtv-hero-actions { justify-content: center; margin-top: 18px; }
+  html:not(.layout-tv) .jtv-hero-play { min-width: 0; width: 56vw; max-width: 220px; height: 50px; }
+  html:not(.layout-tv) .jtv-hero-fav { width: 50px; height: 50px; }
+  html:not(.layout-tv) .jtv-hero-dots { bottom: 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .jtv-hero-slide { transition: none !important; }
+  html:not(.layout-tv) .jtv-hero-slide { transition: none !important; }
 }
 
 /* ───────────────────────── Home ───────────────────────── */
 
-#indexPage,
-.homeSectionsContainer { background: var(--jtv-bg) !important; }
+html:not(.layout-tv) #indexPage,
+html:not(.layout-tv) .homeSectionsContainer { background: var(--jtv-bg) !important; }
 
 /* ───────────────────────── Login ───────────────────────── */
 
-#loginPage {
+html:not(.layout-tv) #loginPage {
   background: radial-gradient(1200px 700px at 50% -10%, #1f2733 0%, #0b0c0f 55%, #000 100%) !important;
 }
-#loginPage form.manualLoginForm,
-#loginPage .visualLoginForm {
+html:not(.layout-tv) #loginPage form.manualLoginForm,
+html:not(.layout-tv) #loginPage .visualLoginForm {
   max-width: 420px !important;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -1617,16 +1602,16 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   backdrop-filter: blur(40px) saturate(180%);
   box-shadow: var(--jtv-glass-rim), 0 30px 80px rgba(0, 0, 0, 0.55);
 }
-#loginPage h1 {
+html:not(.layout-tv) #loginPage h1 {
   text-align: center;
   font-size: 28px !important;
   font-weight: 700 !important;
   margin: 0 0 22px !important;
   color: #fff !important;
 }
-#loginPage .raised { width: 100%; }
-#loginPage .emby-input { height: 44px; }
-#loginPage .raised:not(.button-submit) {
+html:not(.layout-tv) #loginPage .raised { width: 100%; }
+html:not(.layout-tv) #loginPage .emby-input { height: 44px; }
+html:not(.layout-tv) #loginPage .raised:not(.button-submit) {
   display: block;
   width: 100%;
   max-width: 420px;
@@ -1636,7 +1621,7 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
   backdrop-filter: var(--jtv-glass-filter);
   box-shadow: var(--jtv-glass-rim) !important;
 }
-#loginPage .raised.btnForgotPassword {
+html:not(.layout-tv) #loginPage .raised.btnForgotPassword {
   background: transparent !important;
   box-shadow: none !important;
   color: var(--jtv-accent-text) !important;
@@ -1645,19 +1630,19 @@ html.jtv-home:not(.jtv-hero-scrolled) .MuiAppBar-root.MuiAppBar-positionFixed::b
 }
 
 /* signed out: no tabs, no empty capsules */
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:empty { display: none !important; }
-.MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root:has(> a[href="#/"]:only-child) { display: none !important; }
-body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root,
-body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { display: none !important; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:empty { display: none !important; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root:has(> a[href="#/"]:only-child) { display: none !important; }
+html:not(.layout-tv) body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root,
+html:not(.layout-tv) body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { display: none !important; }
 
 /* ───────────────────────── Video player OSD (Apple TV player) ───────────────────────── */
 
-.videoOsdBottom,
-.skinHeader-withBackground.osdHeader {
+html:not(.layout-tv) .videoOsdBottom,
+html:not(.layout-tv) .skinHeader-withBackground.osdHeader {
   background: none !important;
 }
 /* no blur on the header itself: it would trap the fixed-position title below */
-.skinHeader.osdHeader {
+html:not(.layout-tv) .skinHeader.osdHeader {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
   contain: none !important;
@@ -1665,7 +1650,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 }
 
 /* top-left: glass circle back button */
-.osdHeader .headerBackButton {
+html:not(.layout-tv) .osdHeader .headerBackButton {
   width: 48px !important;
   height: 48px !important;
   margin: 12px 0 0 1.2% !important;
@@ -1678,10 +1663,10 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
   color: #fff !important;
 }
-.osdHeader .headerBackButton .material-icons { font-size: 26px !important; }
+html:not(.layout-tv) .osdHeader .headerBackButton .material-icons { font-size: 26px !important; }
 
 /* top-right: SyncPlay / Cast grouped in one capsule, left of the volume capsule */
-.osdHeader .headerRight {
+html:not(.layout-tv) .osdHeader .headerRight {
   margin: 12px 236px 0 0 !important;
   padding: 0 4px;
   height: 48px;
@@ -1691,7 +1676,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   backdrop-filter: var(--jtv-glass-filter);
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
 }
-.osdHeader .headerRight .headerButton {
+html:not(.layout-tv) .osdHeader .headerRight .headerButton {
   width: 42px !important;
   height: 42px !important;
   margin: 3px 0 !important;
@@ -1700,7 +1685,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 }
 
 /* title sits bottom-left above the scrubber, bold like "Matchbox The Movie" */
-.osdHeader .pageTitle {
+html:not(.layout-tv) .osdHeader .pageTitle {
   position: fixed !important;
   left: 2.4%;
   left: max(24px, 2.4%);
@@ -1718,13 +1703,13 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   pointer-events: none;
 }
 /* same treatment for the React player toolbar (web 10.10+ experimental layout) */
-.videoOsd-appBar {
+html:not(.layout-tv) .videoOsd-appBar {
   min-height: 72px !important;
   padding: 12px 1.2% 0 !important;
   padding: 12px max(14px, 1.2%) 0 !important;
   align-items: flex-start !important;
 }
-.videoOsd-appBar > button.MuiIconButton-root {
+html:not(.layout-tv) .videoOsd-appBar > button.MuiIconButton-root {
   width: 48px;
   height: 48px;
   margin: 0 !important;
@@ -1735,8 +1720,8 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
   color: #fff !important;
 }
-.videoOsd-appBar > button.MuiIconButton-root:hover { background: var(--jtv-glass-hover) !important; }
-.videoOsd-appBar > .MuiTypography-root {
+html:not(.layout-tv) .videoOsd-appBar > button.MuiIconButton-root:hover { background: var(--jtv-glass-hover) !important; }
+html:not(.layout-tv) .videoOsd-appBar > .MuiTypography-root {
   position: fixed !important;
   left: 2.4%;
   left: max(24px, 2.4%);
@@ -1753,7 +1738,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
   pointer-events: none;
 }
-.videoOsd-appBar > .MuiBox-root {
+html:not(.layout-tv) .videoOsd-appBar > .MuiBox-root {
   flex: 0 0 auto !important;
   margin: 0 236px 0 auto !important;
   display: flex;
@@ -1766,16 +1751,16 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   backdrop-filter: var(--jtv-glass-filter);
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
 }
-.videoOsd-appBar > .MuiBox-root:empty { display: none; }
-.videoOsd-appBar > .MuiBox-root .MuiIconButton-root {
+html:not(.layout-tv) .videoOsd-appBar > .MuiBox-root:empty { display: none; }
+html:not(.layout-tv) .videoOsd-appBar > .MuiBox-root .MuiIconButton-root {
   width: 42px;
   height: 42px;
   padding: 9px !important;
   color: #fff !important;
 }
 
-.videoOsdBottom .osdTitle:empty { display: none; }
-.videoOsdBottom .osdTitle {
+html:not(.layout-tv) .videoOsdBottom .osdTitle:empty { display: none; }
+html:not(.layout-tv) .videoOsdBottom .osdTitle {
   font-family: var(--jtv-font-display) !important;
   font-size: 30px !important;
   font-weight: 700 !important;
@@ -1784,14 +1769,14 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
 }
 
-.videoOsdBottom .osdControls {
+html:not(.layout-tv) .videoOsdBottom .osdControls {
   padding: 0 2.4% 22px !important;
   padding: 0 max(24px, 2.4%) 22px !important;
 }
 
 /* scrubber: thin capsule, white progress on gray, no thumb until hover */
-.videoOsdBottom .osdPositionText,
-.videoOsdBottom .osdDurationText {
+html:not(.layout-tv) .videoOsdBottom .osdPositionText,
+html:not(.layout-tv) .videoOsdBottom .osdDurationText {
   min-width: 64px;
   font-size: 13px !important;
   font-weight: 500;
@@ -1799,20 +1784,20 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   font-variant-numeric: tabular-nums;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 }
-.videoOsdBottom .osdDurationText { text-align: right; }
-.mdl-slider-background-flex {
+html:not(.layout-tv) .videoOsdBottom .osdDurationText { text-align: right; }
+html:not(.layout-tv) .mdl-slider-background-flex {
   height: 7px !important;
   margin-top: -3.5px !important;
   border-radius: 999px !important;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.24) !important;
 }
-.mdl-slider-background-lower { background: #fff !important; }
-.mdl-slider-background-upper { background: rgba(255, 255, 255, 0.24) !important; }
-.mdl-slider-background-buffered { background: rgba(255, 255, 255, 0.4) !important; }
-.videoOsdBottom .osdPositionSlider::-webkit-slider-thumb { opacity: 0; transition: opacity 0.2s; }
-.videoOsdBottom .sliderContainer:hover .osdPositionSlider::-webkit-slider-thumb { opacity: 1; background: #fff !important; }
-.sliderBubble {
+html:not(.layout-tv) .mdl-slider-background-lower { background: #fff !important; }
+html:not(.layout-tv) .mdl-slider-background-upper { background: rgba(255, 255, 255, 0.24) !important; }
+html:not(.layout-tv) .mdl-slider-background-buffered { background: rgba(255, 255, 255, 0.4) !important; }
+html:not(.layout-tv) .videoOsdBottom .osdPositionSlider::-webkit-slider-thumb { opacity: 0; transition: opacity 0.2s; }
+html:not(.layout-tv) .videoOsdBottom .sliderContainer:hover .osdPositionSlider::-webkit-slider-thumb { opacity: 1; background: #fff !important; }
+html:not(.layout-tv) .sliderBubble {
   background: var(--jtv-glass-strong) !important;
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
@@ -1822,12 +1807,12 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 }
 
 /* every remaining control → glass circle */
-.videoOsdBottom .buttons {
+html:not(.layout-tv) .videoOsdBottom .buttons {
   align-items: center;
   margin-top: 14px;
   padding: 0 !important;
 }
-.videoOsdBottom .buttons .paper-icon-button-light {
+html:not(.layout-tv) .videoOsdBottom .buttons .paper-icon-button-light {
   width: 46px;
   height: 46px;
   padding: 0 !important;
@@ -1840,9 +1825,9 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   color: #fff !important;
   transition: transform 0.2s var(--jtv-ease), background-color 0.2s;
 }
-.videoOsdBottom .buttons .paper-icon-button-light:hover { background: var(--jtv-glass-hover) !important; transform: scale(1.06); }
-.videoOsdBottom .buttons .material-icons { font-size: 24px !important; }
-.videoOsdBottom .osdTimeText {
+html:not(.layout-tv) .videoOsdBottom .buttons .paper-icon-button-light:hover { background: var(--jtv-glass-hover) !important; transform: scale(1.06); }
+html:not(.layout-tv) .videoOsdBottom .buttons .material-icons { font-size: 24px !important; }
+html:not(.layout-tv) .videoOsdBottom .osdTimeText {
   margin-left: 10px;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.66);
@@ -1850,35 +1835,35 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 }
 
 /* transport cluster floats in the middle of the frame (−10s · play · +10s) */
-.videoOsdBottom .buttons .btnRewind,
-.videoOsdBottom .buttons .btnPause,
-.videoOsdBottom .buttons .btnFastForward {
+html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind,
+html:not(.layout-tv) .videoOsdBottom .buttons .btnPause,
+html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward {
   position: fixed !important;
   top: 50%;
   left: 50%;
   margin: 0 !important;
 }
-.videoOsdBottom .buttons .btnPause {
+html:not(.layout-tv) .videoOsdBottom .buttons .btnPause {
   width: 84px !important;
   height: 84px !important;
   transform: translate(-50%, -50%);
 }
-.videoOsdBottom .buttons .btnPause:hover { transform: translate(-50%, -50%) scale(1.06); }
-.videoOsdBottom .buttons .btnPause .material-icons { font-size: 50px !important; }
-.videoOsdBottom .buttons .btnRewind,
-.videoOsdBottom .buttons .btnFastForward {
+html:not(.layout-tv) .videoOsdBottom .buttons .btnPause:hover { transform: translate(-50%, -50%) scale(1.06); }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnPause .material-icons { font-size: 50px !important; }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind,
+html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward {
   width: 60px !important;
   height: 60px !important;
 }
-.videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 132px), -50%); }
-.videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 132px), -50%); }
-.videoOsdBottom .buttons .btnRewind:hover { transform: translate(calc(-50% - 132px), -50%) scale(1.06); }
-.videoOsdBottom .buttons .btnFastForward:hover { transform: translate(calc(-50% + 132px), -50%) scale(1.06); }
-.videoOsdBottom .buttons .btnRewind .material-icons,
-.videoOsdBottom .buttons .btnFastForward .material-icons { font-size: 32px !important; }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 132px), -50%); }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 132px), -50%); }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind:hover { transform: translate(calc(-50% - 132px), -50%) scale(1.06); }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward:hover { transform: translate(calc(-50% + 132px), -50%) scale(1.06); }
+html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind .material-icons,
+html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward .material-icons { font-size: 32px !important; }
 
 /* volume: top-right capsule with white level on gray track */
-.videoOsdBottom .volumeButtons {
+html:not(.layout-tv) .videoOsdBottom .volumeButtons {
   position: fixed !important;
   top: 18px;
   right: 1.2%;
@@ -1896,7 +1881,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
   box-sizing: border-box;
 }
-.videoOsdBottom .volumeButtons .buttonMute {
+html:not(.layout-tv) .videoOsdBottom .volumeButtons .buttonMute {
   background: transparent !important;
   box-shadow: none !important;
   -webkit-backdrop-filter: none;
@@ -1905,22 +1890,13 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
   height: 40px !important;
   margin: 0 !important;
 }
-.videoOsdBottom .volumeButtons .osdVolumeSliderContainer { flex: 1 1 auto; width: auto !important; margin: 0 6px 0 0; }
-.videoOsdBottom .volumeButtons .osdVolumeSlider::-webkit-slider-thumb { opacity: 0; }
-
-.layout-tv .videoOsdBottom .buttons .paper-icon-button-light:focus,
-.layout-tv .osdHeader .headerButton:focus {
-  background: #fff !important;
-  color: #000 !important;
-}
-.layout-tv .videoOsdBottom .buttons .btnPause:focus { transform: translate(-50%, -50%) scale(1.1); }
-.layout-tv .videoOsdBottom .buttons .btnRewind:focus { transform: translate(calc(-50% - 132px), -50%) scale(1.1); }
-.layout-tv .videoOsdBottom .buttons .btnFastForward:focus { transform: translate(calc(-50% + 132px), -50%) scale(1.1); }
+html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { flex: 1 1 auto; width: auto !important; margin: 0 6px 0 0; }
+html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSlider::-webkit-slider-thumb { opacity: 0; }
 
 /* skip-intro / up-next prompts */
-.upNextContainer,
-.skip-button,
-.skipIntro button {
+html:not(.layout-tv) .upNextContainer,
+html:not(.layout-tv) .skip-button,
+html:not(.layout-tv) .skipIntro button {
   background: var(--jtv-glass-strong) !important;
   -webkit-backdrop-filter: blur(30px);
   backdrop-filter: blur(30px);
@@ -1931,7 +1907,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 
 /* ───────────────────────── Now-playing bar ───────────────────────── */
 
-.nowPlayingBar {
+html:not(.layout-tv) .nowPlayingBar {
   background: var(--jtv-glass-strong) !important;
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   backdrop-filter: blur(40px) saturate(180%);
@@ -1940,8 +1916,8 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 
 /* ───────────────────────── Dashboard ───────────────────────── */
 
-.MuiPaper-root.MuiCard-root,
-.paperList {
+html:not(.layout-tv) .MuiPaper-root.MuiCard-root,
+html:not(.layout-tv) .paperList {
   background: #1c1c1e !important;
   border-radius: 14px !important;
   box-shadow: var(--jtv-hairline) !important;
@@ -1950,7 +1926,7 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 /* ───────────────────────── Phones ───────────────────────── */
 
 /* hamburger (shown when the tab pill collapses) → glass circle */
-.MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root {
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root {
   width: 46px;
   height: 46px;
   margin-right: auto !important;
@@ -1964,14 +1940,14 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 }
 
 /* list rows (library "List" view, Top-10 style): inset hairline separators */
-.vertical-list .listItem { border-bottom: 0 !important; }
-.vertical-list .listItem .listItemBody { border-bottom: 0.5px solid var(--jtv-separator); }
-#listChildrenCollapsible .listItem .listItemBody { border-bottom: 0; }
+html:not(.layout-tv) .vertical-list .listItem { border-bottom: 0 !important; }
+html:not(.layout-tv) .vertical-list .listItem .listItemBody { border-bottom: 0.5px solid var(--jtv-separator); }
+html:not(.layout-tv) #listChildrenCollapsible .listItem .listItemBody { border-bottom: 0; }
 
 /* Below 1000px Jellyfin drops the backdrop layer, so the (hidden) poster becomes a
    full-bleed portrait hero — the iPhone/iPad-portrait Apple TV look. */
 @media (max-width: 999px) {
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer {
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer {
     display: block !important;
     position: absolute !important;
     left: 0; right: 0;
@@ -1983,9 +1959,9 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     overflow: hidden;
     pointer-events: none;
   }
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .card,
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardBox,
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardScalable {
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .card,
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardBox,
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardScalable {
     width: 100% !important;
     height: 100% !important;
     margin: 0 !important;
@@ -1997,27 +1973,27 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     -webkit-filter: none !important;
     filter: none !important;
   }
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .card {
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .card {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     bottom: auto !important;
   }
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardPadder { display: none !important; }
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardImageContainer,
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardContent {
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardPadder { display: none !important; }
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardImageContainer,
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardContent {
     position: absolute !important;
     top: 0; left: 0; right: 0; bottom: 0;
     border-radius: 0 !important;
     background-size: cover !important;
     background-position: center 20% !important;
   }
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardImageContainer {
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardImageContainer {
     filter: blur(28px) saturate(140%);
     transform: scale(1.25);
   }
-  .itemDetailPage:has(#itemBackdrop[style*="url("]) .detailPagePrimaryContainer > .detailImageContainer { display: none !important; }
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardScalable::after {
+  html:not(.layout-tv) .itemDetailPage:has(#itemBackdrop[style*="url("]) .detailPagePrimaryContainer > .detailImageContainer { display: none !important; }
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer .cardScalable::after {
     box-shadow: none;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 22%, rgba(0, 0, 0, 0) 48%, rgba(0, 0, 0, 0.6) 76%, #000 100%);
   }
@@ -2025,22 +2001,22 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
 
 /* ── iPhone (references: iOS 26 Apple TV app) ── */
 @media (max-width: 600px) {
-  .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer { top: calc(220px - 72vh); height: 72vh; }
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer > .detailImageContainer { top: calc(220px - 72vh); height: 72vh; }
   /* header: large title on Home, compact wordmark elsewhere, avatar right */
-  .MuiAppBar-root > .MuiToolbar-root:first-child { min-height: 64px !important; }
-  .MuiAppBar-root > .MuiToolbar-root:first-child::before {
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child { min-height: 64px !important; }
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child::before {
     left: 20px;
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.02em;
   }
-  body:has(#indexPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child { min-height: 84px !important; }
-  body:has(#indexPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child::before {
+  html:not(.layout-tv) body:has(#indexPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child { min-height: 84px !important; }
+  html:not(.layout-tv) body:has(#indexPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child::before {
     font-size: 34px;
     letter-spacing: -0.025em;
   }
-  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { height: 44px; margin-left: 6px; }
-  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child {
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root { height: 44px; margin-left: 6px; }
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root:last-child {
     width: 46px;
     height: 46px;
     background: transparent;
@@ -2048,22 +2024,22 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
-  .MuiAppBar-root .MuiAvatar-root { width: 42px !important; height: 42px !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18); }
-  .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root { width: 38px; height: 38px; padding: 8px !important; }
-  .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 { font-size: 28px !important; }
-  .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { margin-left: 112px !important; width: 42px; height: 42px; }
+  html:not(.layout-tv) .MuiAppBar-root .MuiAvatar-root { width: 42px !important; height: 42px !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18); }
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiBox-root .MuiIconButton-root { width: 38px; height: 38px; padding: 8px !important; }
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root + .MuiToolbar-root .MuiTypography-h2 { font-size: 28px !important; }
+  html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { margin-left: 112px !important; width: 42px; height: 42px; }
 
   /* floating Liquid Glass tab bar built from the (always-mounted) navigation drawer */
-  body:has(.MuiDrawer-modal a[href="#/home"]) .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { display: none !important; }
-  .MuiDrawer-modal:has(a[href="#/home"]) {
+  html:not(.layout-tv) body:has(.MuiDrawer-modal a[href="#/home"]) .MuiAppBar-root > .MuiToolbar-root:first-child > button.MuiIconButton-root { display: none !important; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) {
     visibility: visible !important;
     top: auto !important;
     bottom: 0 !important;
     height: 0 !important;
     pointer-events: none;
   }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiBackdrop-root { display: none !important; }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper {
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiBackdrop-root { display: none !important; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper {
     visibility: visible !important;
     transform: none !important;
     pointer-events: auto;
@@ -2086,13 +2062,13 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     backdrop-filter: var(--jtv-glass-filter);
     box-shadow: var(--jtv-glass-rim), 0 10px 30px rgba(0, 0, 0, 0.45) !important;
   }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper > .MuiBox-root,
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiList-root,
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItem-root { display: contents !important; }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiDivider-root,
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListSubheader-root,
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root[href="#/"] { display: none !important; }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root {
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper > .MuiBox-root,
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiList-root,
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItem-root { display: contents !important; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiDivider-root,
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListSubheader-root,
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root[href="#/"] { display: none !important; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root {
     flex: 1 1 0;
     min-width: 0;
     display: flex !important;
@@ -2106,18 +2082,18 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     color: #fff !important;
     background: transparent !important;
   }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root.Mui-selected {
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper a.MuiListItemButton-root.Mui-selected {
     background: rgba(0, 0, 0, 0.36) !important;
     color: var(--jtv-accent-text) !important;
   }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemIcon-root {
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemIcon-root {
     min-width: 0 !important;
     justify-content: center;
     color: inherit !important;
   }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemIcon-root svg { font-size: 27px !important; }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemText-root { margin: 0 !important; flex: 0 0 auto; max-width: 100%; }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemText-primary {
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemIcon-root svg { font-size: 27px !important; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemText-root { margin: 0 !important; flex: 0 0 auto; max-width: 100%; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiListItemText-primary {
     display: block;
     font-size: 10.5px !important;
     font-weight: 600 !important;
@@ -2128,23 +2104,25 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     text-overflow: ellipsis;
     color: inherit !important;
   }
-  .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiTouchRipple-root { display: none; }
-  body:has(#videoOsdPage:not(.hide)) .MuiDrawer-modal,
-  body:has(#loginPage:not(.hide)) .MuiDrawer-modal { display: none !important; }
+  html:not(.layout-tv) .MuiDrawer-modal:has(a[href="#/home"]) .MuiDrawer-paper .MuiTouchRipple-root { display: none; }
+  html:not(.layout-tv) body:has(#videoOsdPage:not(.hide)) .MuiDrawer-modal,
+  html:not(.layout-tv) body:has(#loginPage:not(.hide)) .MuiDrawer-modal { display: none !important; }
   /* keep content clear of the tab bar */
-  .mainAnimatedPage:not(#videoOsdPage) { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+  html:not(.layout-tv) .mainAnimatedPage:not(#videoOsdPage) { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
 
   /* cards: Continue Watching tiles with the next one peeking in */
-  .overflowBackdropCard { width: 68vw !important; }
-  .emby-scrollbuttons { display: none !important; }
-  .sectionTitle, .sectionTitle-cards, .sectionTitleTextButton { font-size: 22px !important; }
+  html:not(.layout-tv) .overflowBackdropCard { width: 68vw !important; }
+  html:not(.layout-tv) .emby-scrollbuttons { display: none !important; }
+  html:not(.layout-tv) .sectionTitle,
+  html:not(.layout-tv) .sectionTitle-cards,
+  html:not(.layout-tv) .sectionTitleTextButton { font-size: 22px !important; }
 
   /* detail: centered hero like iOS (logo, meta, Play pill + circles) */
-  .itemDetailPage .itemBackdrop { height: 72vh !important; min-height: 420px; }
-  .itemDetailPage .itemBackdrop::after {
+  html:not(.layout-tv) .itemDetailPage .itemBackdrop { height: 72vh !important; min-height: 420px; }
+  html:not(.layout-tv) .itemDetailPage .itemBackdrop::after {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 38%, rgba(0, 0, 0, 0.55) 70%, #000 100%);
   }
-  .itemDetailPage .detailLogo {
+  html:not(.layout-tv) .itemDetailPage .detailLogo {
     left: 0 !important;
     right: 0 !important;
     margin: 0 auto;
@@ -2153,61 +2131,64 @@ body:has(#loginPage:not(.hide)) .MuiAppBar-root > .MuiToolbar-root:first-child >
     height: 100px !important;
     background-position: center bottom !important;
   }
-  .itemDetailPage .detailPagePrimaryContainer { padding-left: 20px !important; padding-right: 20px !important; }
-  .itemDetailPage .detailRibbon { align-items: center !important; }
-  .itemDetailPage .nameContainer { text-align: center !important; }
-  .itemDetailPage .itemName { font-size: 28px !important; }
-  .itemDetailPage .itemMiscInfo { justify-content: center !important; flex-wrap: wrap; }
-  .itemDetailPage .mainDetailButtons {
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContainer { padding-left: 20px !important; padding-right: 20px !important; }
+  html:not(.layout-tv) .itemDetailPage .detailRibbon { align-items: center !important; }
+  html:not(.layout-tv) .itemDetailPage .nameContainer { text-align: center !important; }
+  html:not(.layout-tv) .itemDetailPage .itemName { font-size: 28px !important; }
+  html:not(.layout-tv) .itemDetailPage .itemMiscInfo { justify-content: center !important; flex-wrap: wrap; }
+  html:not(.layout-tv) .itemDetailPage .mainDetailButtons {
     justify-content: center !important;
     flex-wrap: wrap;
     margin: 16px 0 4px !important;
   }
-  .itemDetailPage .mainDetailButtons .detailButton { width: 46px; height: 46px; order: 2; }
-  .itemDetailPage .mainDetailButtons .detailButton + .detailButton,
-  .itemDetailPage .mainDetailButtons .detailButton.emby-button { margin: 5px !important; }
+  html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton { width: 46px; height: 46px; order: 2; }
+  html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton + .detailButton,
+  html:not(.layout-tv) .itemDetailPage .mainDetailButtons .detailButton.emby-button { margin: 5px !important; }
   /* row 1 = Play pill + ✓ (Apple's Resume + watchlist), the rest centered underneath */
-  .itemDetailPage .mainDetailButtons .btnPlay { order: 0; width: calc(100% - 66px); min-width: 0; height: 50px; padding: 0 !important; }
-  .itemDetailPage .mainDetailButtons .btnPlaystate { order: 1; }
-  #listChildrenCollapsible .itemsContainer { scrollbar-width: none; }
-  #listChildrenCollapsible .itemsContainer::-webkit-scrollbar { display: none; }
-  .itemDetailPage .detailPagePrimaryContent { padding-left: 20px !important; padding-right: 20px !important; }
-  .itemDetailPage .overview { font-size: 16px !important; }
+  html:not(.layout-tv) .itemDetailPage .mainDetailButtons .btnPlay { order: 0; width: calc(100% - 66px); min-width: 0; height: 50px; padding: 0 !important; }
+  html:not(.layout-tv) .itemDetailPage .mainDetailButtons .btnPlaystate { order: 1; }
+  html:not(.layout-tv) #listChildrenCollapsible .itemsContainer { scrollbar-width: none; }
+  html:not(.layout-tv) #listChildrenCollapsible .itemsContainer::-webkit-scrollbar { display: none; }
+  html:not(.layout-tv) .itemDetailPage .detailPagePrimaryContent { padding-left: 20px !important; padding-right: 20px !important; }
+  html:not(.layout-tv) .itemDetailPage .overview { font-size: 16px !important; }
 
   /* season row: tall iOS episode cards */
-  #listChildrenCollapsible .listItem { width: 66vw; min-width: 0; height: 60vw; margin-right: 14px !important; }
-  #listChildrenCollapsible .listItemBody { padding: 48px 14px 12px !important; }
-  #listChildrenCollapsible .listItem-overview { -webkit-line-clamp: 3; }
+  html:not(.layout-tv) #listChildrenCollapsible .listItem { width: 66vw; min-width: 0; height: 60vw; margin-right: 14px !important; }
+  html:not(.layout-tv) #listChildrenCollapsible .listItemBody { padding: 48px 14px 12px !important; }
+  html:not(.layout-tv) #listChildrenCollapsible .listItem-overview { -webkit-line-clamp: 3; }
 
   /* list rows: Top-10 layout (poster, title, gray genre) */
-  .vertical-list .listItem .listItemImage { border-radius: 10px !important; }
-  .vertical-list .listItemBodyText:first-child { font-size: 17px !important; }
+  html:not(.layout-tv) .vertical-list .listItem .listItemImage { border-radius: 10px !important; }
+  html:not(.layout-tv) .vertical-list .listItemBodyText:first-child { font-size: 17px !important; }
 
   /* player, portrait iPhone */
-  .videoOsd-appBar > .MuiBox-root { margin-right: 60px !important; }
-  .videoOsd-appBar > .MuiTypography-root,
-  .osdHeader .pageTitle { font-size: 22px !important; right: 20px; left: 20px; bottom: 150px; }
-  .videoOsdBottom .volumeButtons {
+  html:not(.layout-tv) .videoOsd-appBar > .MuiBox-root { margin-right: 60px !important; }
+  html:not(.layout-tv) .videoOsd-appBar > .MuiTypography-root,
+  html:not(.layout-tv) .osdHeader .pageTitle { font-size: 22px !important; right: 20px; left: 20px; bottom: 150px; }
+  html:not(.layout-tv) .videoOsdBottom .volumeButtons {
     display: flex !important;
     width: 48px;
     padding: 0;
     justify-content: center;
     right: 14px;
   }
-  .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { display: none !important; }
-  .videoOsdBottom .buttons .btnPause { width: 84px !important; height: 84px !important; }
-  .videoOsdBottom .buttons .btnRewind,
-  .videoOsdBottom .buttons .btnFastForward { width: 58px !important; height: 58px !important; }
-  .videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 106px), -50%); }
-  .videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 106px), -50%); }
-  .videoOsdBottom .buttons .btnRewind:hover { transform: translate(calc(-50% - 106px), -50%) scale(1.06); }
-  .videoOsdBottom .buttons .btnFastForward:hover { transform: translate(calc(-50% + 106px), -50%) scale(1.06); }
-  .videoOsdBottom .osdTimeText { display: none !important; }
-  .videoOsdBottom .buttons { justify-content: space-between; }
-  .videoOsdBottom .buttons .paper-icon-button-light { width: 42px; height: 42px; margin: 0 2px !important; }
-  .videoOsdBottom .osdControls { padding: 0 20px calc(18px + env(safe-area-inset-bottom, 0px)) !important; }
+  html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { display: none !important; }
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnPause { width: 84px !important; height: 84px !important; }
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind,
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward { width: 58px !important; height: 58px !important; }
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind { transform: translate(calc(-50% - 106px), -50%); }
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward { transform: translate(calc(-50% + 106px), -50%); }
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind:hover { transform: translate(calc(-50% - 106px), -50%) scale(1.06); }
+  html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward:hover { transform: translate(calc(-50% + 106px), -50%) scale(1.06); }
+  html:not(.layout-tv) .videoOsdBottom .osdTimeText { display: none !important; }
+  html:not(.layout-tv) .videoOsdBottom .buttons { justify-content: space-between; }
+  html:not(.layout-tv) .videoOsdBottom .buttons .paper-icon-button-light { width: 42px; height: 42px; margin: 0 2px !important; }
+  html:not(.layout-tv) .videoOsdBottom .osdControls { padding: 0 20px calc(18px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cardScalable, .cardBox, .detailButton, #listChildrenCollapsible .listItem { transition: none !important; }
+  html:not(.layout-tv) .cardScalable,
+  html:not(.layout-tv) .cardBox,
+  html:not(.layout-tv) .detailButton,
+  html:not(.layout-tv) #listChildrenCollapsible .listItem { transition: none !important; }
 }

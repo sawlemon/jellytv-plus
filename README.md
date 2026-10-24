@@ -3,8 +3,8 @@
 Make your Jellyfin server look and feel like the Apple TV app.
 
 Jelly TV+ is a free theme for [Jellyfin](https://jellyfin.org). It changes how Jellyfin looks
-in a web browser, on iPhone and iPad, and on TV apps that use Jellyfin's web interface (like the
-Samsung TV app). Your movies and shows stay exactly the same; only the look changes.
+in a web browser and on iPhone and iPad. It is turned off on TVs (see *Samsung TVs* below).
+Your movies and shows stay exactly the same; only the look changes.
 
 Made for **Jellyfin 12.2**. It may need small fixes on other versions.
 
@@ -22,8 +22,6 @@ The screenshots use free, openly licensed films from the
 | ![Movie library](screenshots/library.jpg) | ![Video player](screenshots/player.jpg) |
 | **iPad** | **Sign in** |
 | ![iPad movie page](screenshots/ipad-movie.jpg) | ![Sign-in page](screenshots/sign-in.jpg) |
-| **TV: Home** | **TV: Movie page** |
-| ![TV home screen](screenshots/tv-home.jpg) | ![TV movie page](screenshots/tv-movie.jpg) |
 
 ## What you get
 
@@ -92,14 +90,12 @@ Backups go into a `backups` folder, which Git ignores.
 
 ## Samsung TVs
 
-The theme also works in the Samsung (Tizen) Jellyfin app, with a few differences:
+The theme is turned off on TVs on purpose. TV apps, like the Samsung (Tizen) Jellyfin app, keep
+Jellyfin's normal look. Jellyfin marks its TV layout with a class called `layout-tv`, and the
+theme does nothing on a page that has it. The Home screen banner does not show on TVs either.
 
-- **Fully close and reopen the app** after installing or updating the theme. TVs often keep
+- **Fully close and reopen the TV app** after installing or updating the theme. TVs often keep
   apps paused in the background, so the old look can stay until the app really restarts.
-- **Turn on artwork:** in the TV app, go to **Settings → Display → Backdrops**. Without it, movie
-  pages have no background picture.
-- **No Home screen banner on TVs.** The TV app has its own built-in copy of Jellyfin's interface,
-  so it never loads the banner script. TVs show the normal rows instead.
 - If you see gray bars around videos on a Samsung TV, add the small fix in
   `overrides/samsung-tv.css` to the end of your Custom CSS. With the command above, add
   `--override overrides/samsung-tv.css`.
