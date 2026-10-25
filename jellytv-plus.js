@@ -58,6 +58,11 @@
     (item.Genres || []).slice(0, 2).forEach(function (g) { parts.push(g); });
     var html = parts.map(esc).join(' · ');
     if (item.OfficialRating) html += ' <span class="jtv-hero-rating">' + esc(item.OfficialRating) + '</span>';
+    var quality = window.__jellyTvPlusQualityLabels ? window.__jellyTvPlusQualityLabels(item) : [];
+    quality.forEach(function (l) {
+      html += ' <span class="jtv-hero-rating jtv-hero-quality' + (l.hdr ? ' is-hdr' : '') + '"' +
+        (l.text === 'DV' ? ' title="Dolby Vision"' : '') + '>' + esc(l.text === 'DV' ? 'Dolby Vision' : l.text) + '</span>';
+    });
     return html;
   }
 
@@ -276,7 +281,7 @@
       Limit: 24,
       ImageTypes: 'Backdrop',
       EnableImageTypes: 'Backdrop,Logo,Primary',
-      Fields: 'Overview,Genres,DateCreated,ProductionYear,OfficialRating,RunTimeTicks,ChildCount',
+      Fields: 'Overview,Genres,DateCreated,ProductionYear,OfficialRating,RunTimeTicks,ChildCount,MediaSources',
       EnableUserData: true
     }).then(function (r) {
       state.items = (r.Items || []).filter(function (it) { return it.BackdropImageTags && it.BackdropImageTags.length; }).slice(0, LIMIT);
@@ -390,6 +395,7 @@
     if (range) labels.push({ text: range, hdr: true });
     return labels;
   }
+  window.__jellyTvPlusQualityLabels = labelsFor;
 
   function apply(card, id, labels) {
     var existing = card.querySelector('.jtv-quality');

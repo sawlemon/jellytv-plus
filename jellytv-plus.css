@@ -1470,6 +1470,19 @@ html:not(.layout-tv) .jtv-hero-rating {
   line-height: 15px;
   text-shadow: none;
 }
+/* resolution as a filled box like Apple's "4K" badge; HDR formats outlined in gold */
+html:not(.layout-tv) .jtv-hero-quality {
+  margin-left: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  border-color: transparent;
+  color: #000;
+}
+html:not(.layout-tv) .jtv-hero-rating + .jtv-hero-quality { margin-left: 8px; }
+html:not(.layout-tv) .jtv-hero-quality.is-hdr {
+  background: transparent;
+  border-color: rgba(255, 214, 10, 0.75);
+  color: #ffd60a;
+}
 html:not(.layout-tv) .jtv-hero-overview {
   margin: 12px 0 0 !important;
   max-width: 560px;
