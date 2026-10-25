@@ -510,3 +510,24 @@
   new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
   schedule();
 })();
+
+/*
+ * Subtitle size default. Jellyfin 12.2 renders "Normal" text subtitles at 1.36em and keeps
+ * the chosen size only in browser localStorage (localplayersubtitleappearance3), not per user
+ * on the server, so every device falls back to Normal. Seed "small" (1em) on first load; a
+ * device where someone later picks a size in Settings keeps that choice.
+ */
+(function () {
+  'use strict';
+  if (window.__jellyTvPlusSubtitles) return;
+  window.__jellyTvPlusSubtitles = true;
+
+  var KEY = 'localplayersubtitleappearance3';
+  try {
+    if (!localStorage.getItem(KEY)) {
+      localStorage.setItem(KEY, JSON.stringify({ textSize: 'small' }));
+    }
+  } catch (e) {
+    /* storage unavailable: keep Jellyfin defaults */
+  }
+})();
