@@ -329,3 +329,142 @@
   setInterval(tick, 1000);
   tick();
 })();
+
+/*
+ * Quality badges under movie titles (4K, 1080p, DV = Dolby Vision, HDR10 …), styled by .jtv-quality in jellytv-plus.css.
+ * Reads the video stream of each Movie card's item from the server and adds pills after the year line.
+ */
+(function () {
+  'use strict';
+  if (window.__jellyTvPlusQuality) return;
+  window.__jellyTvPlusQuality = true;
+
+  var BATCH = 50;
+  var DELAY_MS = 200;
+  var RETRY_MS = 60000;
+
+  var cache = new Map();
+  var inflight = {};
+  var retryAt = {};
+  var timer = null;
+  var userId = null;
+
+  function api() { return window.ApiClient; }
+  function isTv() { return document.documentElement.classList.contains('layout-tv'); }
+  function key(id) { return String(id).replace(/-/g, '').toLowerCase(); }
+
+  function resolutionLabel(w, h) {
+    if (w >= 3200 || h >= 2000) return '4K';
+    if (w >= 1700 || h >= 1000) return '1080p';
+    if (w >= 1200 || h >= 700) return '720p';
+    return 'SD';
+  }
+
+  // DOVIInvalid means broken Dolby Vision metadata, so it falls back to the plain range
+  function rangeLabel(s) {
+    var t = String(s.VideoRangeType || '');
+    if (t === 'DOVIInvalid') t = s.VideoRange === 'HDR' ? 'HDR' : 'SDR';
+    if (!t || t === 'Unknown') t = String(s.VideoRange || 'SDR');
+    if (t === 'SDR' || t === 'Unknown') return '';
+    if (t.indexOf('DOVI') === 0) return 'DV';
+    if (t === 'HDR10Plus') return 'HDR10+';
+    if (t === 'HDR10') return 'HDR10';
+    if (t === 'HLG') return 'HLG';
+    return 'HDR';
+  }
+
+  // best video stream across all versions of the item (most pixels wins)
+  function labelsFor(item) {
+    var best = null;
+    var bestPixels = -1;
+    (item.MediaSources || []).forEach(function (src) {
+      (src.MediaStreams || []).forEach(function (s) {
+        if (s.Type !== 'Video') return;
+        var px = (s.Width || 0) * (s.Height || 0);
+        if (px > bestPixels) { best = s; bestPixels = px; }
+      });
+    });
+    if (!best || !best.Width) return [];
+    var labels = [{ text: resolutionLabel(best.Width || 0, best.Height || 0), hdr: false }];
+    var range = rangeLabel(best);
+    if (range) labels.push({ text: range, hdr: true });
+    return labels;
+  }
+
+  function apply(card, id, labels) {
+    var existing = card.querySelector('.jtv-quality');
+    if (card.getAttribute('data-jtv-quality') === id && (existing || !labels.length)) return;
+    if (existing) existing.remove();
+    card.setAttribute('data-jtv-quality', id);
+    if (!labels.length) return;
+    var host = card.querySelector('.cardText-secondary');
+    if (!host) {
+      var first = card.querySelector('.cardText-first');
+      if (!first || !first.parentNode) return;
+      host = document.createElement('div');
+      host.className = 'cardText cardText-secondary';
+      first.parentNode.insertBefore(host, first.nextSibling);
+    }
+    var hasText = host.textContent.replace(/[\s\u00a0]/g, '') !== '';
+    if (!hasText) host.textContent = '';
+    var wrap = document.createElement('span');
+    wrap.className = 'jtv-quality' + (hasText ? '' : ' jtv-quality-solo');
+    labels.forEach(function (l) {
+      var pill = document.createElement('span');
+      pill.className = 'jtv-pill' + (l.hdr ? ' jtv-pill-hdr' : '');
+      pill.textContent = l.text;
+      if (l.text === 'DV') pill.title = 'Dolby Vision';
+      wrap.appendChild(pill);
+    });
+    host.appendChild(wrap);
+  }
+
+  function fetchBatch(client, uid, ids) {
+    ids.forEach(function (id) { inflight[id] = true; });
+    client.getItems(uid, { Ids: ids.join(','), Fields: 'MediaSources', EnableImages: false, EnableUserData: false }).then(function (r) {
+      var seen = {};
+      (r.Items || []).forEach(function (it) {
+        seen[key(it.Id)] = true;
+        cache.set(key(it.Id), labelsFor(it));
+      });
+      ids.forEach(function (id) {
+        delete inflight[id];
+        if (!seen[id]) cache.set(id, []);
+      });
+      schedule();
+    }, function () {
+      ids.forEach(function (id) {
+        delete inflight[id];
+        retryAt[id] = Date.now() + RETRY_MS;
+      });
+    });
+  }
+
+  function run() {
+    timer = null;
+    var client = api();
+    if (isTv() || !client || !client.getCurrentUserId) return;
+    var uid = client.getCurrentUserId();
+    if (!uid) return;
+    if (uid !== userId) { cache = new Map(); userId = uid; }
+    var cards = document.querySelectorAll('.card[data-id][data-type="Movie"]');
+    var need = [];
+    var now = Date.now();
+    for (var i = 0; i < cards.length; i++) {
+      var id = key(cards[i].getAttribute('data-id'));
+      var labels = cache.get(id);
+      if (labels !== undefined) { apply(cards[i], id, labels); continue; }
+      if (inflight[id] || (retryAt[id] && retryAt[id] > now) || need.indexOf(id) !== -1) continue;
+      need.push(id);
+    }
+    for (var b = 0; b < need.length; b += BATCH) fetchBatch(client, uid, need.slice(b, b + BATCH));
+  }
+
+  function schedule() {
+    if (timer || isTv()) return;
+    timer = setTimeout(run, DELAY_MS);
+  }
+
+  new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+  schedule();
+})();

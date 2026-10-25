@@ -36,6 +36,9 @@ The screenshots use free, openly licensed films from the
 - **Episodes shown as a row of picture cards**, like the Apple TV app.
 - **A cleaner video player** with big round buttons in the middle of the screen.
 - **Round cast photos**, rounded posters, and smooth hover and focus effects.
+- **Quality labels under movie titles**, like `4K` or `1080p`, plus `DV` (Dolby Vision) or `HDR10`
+  when a movie has it. Jelly TV+ reads them from the movie file on your server. This part is in
+  `jellytv-plus.js`, so it needs the plugin (see *Part 2* below).
 
 ## How to install
 

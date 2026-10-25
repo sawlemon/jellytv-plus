@@ -719,6 +719,32 @@ html:not(.layout-tv) .squareCard .cardScalable .itemProgressBar {
   margin: 0 10px 10px !important;
 }
 
+/* quality badges after the year (added by jellytv-plus.js) */
+html:not(.layout-tv) .cardText.cardText-secondary:has(.jtv-quality) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html:not(.layout-tv) .jtv-quality { white-space: nowrap; }
+html:not(.layout-tv) .jtv-pill {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 4px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 15px;
+  vertical-align: 1px;
+}
+html:not(.layout-tv) .jtv-quality-solo .jtv-pill:first-child { margin-left: 0; }
+html:not(.layout-tv) .jtv-pill.jtv-pill-hdr {
+  color: #ffd60a;
+  border-color: rgba(255, 214, 10, 0.5);
+}
+
 /* library tiles already carry their name in the artwork */
 html:not(.layout-tv) .card[data-type="CollectionFolder"]:has(.cardImageContainer[style*="url("]) .cardText { display: none !important; }
 
