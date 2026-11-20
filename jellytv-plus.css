@@ -107,6 +107,10 @@ html:not(.layout-tv) .MuiTypography-h3 {
 }
 
 html:not(.layout-tv) .backgroundContainer { background-color: var(--jtv-bg) !important; }
+/* during inline video playback Jellyfin marks these transparent; the video container sits
+   earlier in the DOM than .backgroundContainer, so an opaque layer here hides the picture */
+html.transparentDocument:not(.layout-tv) { background: transparent !important; }
+html:not(.layout-tv) .backgroundContainer.backgroundContainer-transparent:not(.withBackdrop) { background-color: transparent !important; }
 
 html:not(.layout-tv)::selection,
 html:not(.layout-tv) ::selection { background: rgba(10, 132, 255, 0.45); }
@@ -1688,6 +1692,11 @@ html:not(.layout-tv) .skinHeader.osdHeader {
   padding-top: 6px;
 }
 
+/* Let clicks through the empty header row to the volume capsule underneath. */
+html:not(.layout-tv) .osdHeader .headerTop { pointer-events: none; }
+html:not(.layout-tv) .osdHeader .headerTop button,
+html:not(.layout-tv) .osdHeader .headerTop a { pointer-events: auto; }
+
 /* top-left: glass circle back button */
 html:not(.layout-tv) .osdHeader .headerBackButton {
   width: 48px !important;
@@ -1907,7 +1916,7 @@ html:not(.layout-tv) .videoOsdBottom .volumeButtons {
   top: 18px;
   right: 1.2%;
   right: max(14px, 1.2%);
-  display: flex;
+  display: flex !important;
   align-items: center;
   height: 48px;
   width: 210px;
@@ -1929,8 +1938,7 @@ html:not(.layout-tv) .videoOsdBottom .volumeButtons .buttonMute {
   height: 40px !important;
   margin: 0 !important;
 }
-html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { flex: 1 1 auto; width: auto !important; margin: 0 6px 0 0; }
-html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSlider::-webkit-slider-thumb { opacity: 0; }
+html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { flex: 1 1 auto; min-width: 0; width: auto !important; margin: 0 6px 0 0; }
 
 /* skip-intro / up-next prompts */
 html:not(.layout-tv) .upNextContainer,
@@ -2201,17 +2209,14 @@ html:not(.layout-tv) #listChildrenCollapsible .listItem .listItemBody { border-b
   html:not(.layout-tv) .vertical-list .listItemBodyText:first-child { font-size: 17px !important; }
 
   /* player, portrait iPhone */
-  html:not(.layout-tv) .videoOsd-appBar > .MuiBox-root { margin-right: 60px !important; }
+  html:not(.layout-tv) .osdHeader .headerRight,
+  html:not(.layout-tv) .videoOsd-appBar > .MuiBox-root { margin-right: 152px !important; }
   html:not(.layout-tv) .videoOsd-appBar > .MuiTypography-root,
   html:not(.layout-tv) .osdHeader .pageTitle { font-size: 22px !important; right: 20px; left: 20px; bottom: 150px; }
   html:not(.layout-tv) .videoOsdBottom .volumeButtons {
-    display: flex !important;
-    width: 48px;
-    padding: 0;
-    justify-content: center;
-    right: 14px;
+    width: 128px;
+    padding-left: 10px;
   }
-  html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { display: none !important; }
   html:not(.layout-tv) .videoOsdBottom .buttons .btnPause { width: 84px !important; height: 84px !important; }
   html:not(.layout-tv) .videoOsdBottom .buttons .btnRewind,
   html:not(.layout-tv) .videoOsdBottom .buttons .btnFastForward { width: 58px !important; height: 58px !important; }
