@@ -1975,6 +1975,9 @@ html:not(.layout-tv) .videoOsdBottom .osdVolumeSlider::-moz-range-thumb { opacit
 html:not(.layout-tv) .videoOsdBottom .osdVolumeSlider:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 999px; }
 html:not(.layout-tv) .videoOsdBottom.videoOsdBottom-hidden .volumeButtons { pointer-events: none; }
 
+/* Hide Jellyfin's separate volume popup; keep the player slider and mute button. */
+html:not(.layout-tv) .volumeOsd { display: none !important; }
+
 /* skip-intro / up-next prompts */
 html:not(.layout-tv) .upNextContainer,
 html:not(.layout-tv) .skip-button,
