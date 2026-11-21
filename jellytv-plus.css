@@ -1719,10 +1719,12 @@ html:not(.layout-tv) .skinHeader.osdHeader {
   padding-top: 6px;
 }
 
-/* Let clicks through the empty header row to the volume capsule underneath. */
-html:not(.layout-tv) .osdHeader .headerTop { pointer-events: none; }
-html:not(.layout-tv) .osdHeader .headerTop button,
-html:not(.layout-tv) .osdHeader .headerTop a { pointer-events: auto; }
+/* Let clicks through both player headers to the volume capsule underneath.
+   The React app bar sets pointer-events with !important. */
+html:not(.layout-tv) .skinHeader.osdHeader,
+html:not(.layout-tv) .osdHeader .headerTop { pointer-events: none !important; }
+html:not(.layout-tv) .osdHeader:not(.osdHeader-hidden) .headerTop :is(button, a),
+html:not(.layout-tv) .osdHeader:not(.osdHeader-hidden) .videoOsd-appBar :is(button, a) { pointer-events: auto; }
 
 /* top-left: glass circle back button */
 html:not(.layout-tv) .osdHeader .headerBackButton {
@@ -1966,6 +1968,12 @@ html:not(.layout-tv) .videoOsdBottom .volumeButtons .buttonMute {
   margin: 0 !important;
 }
 html:not(.layout-tv) .videoOsdBottom .volumeButtons .osdVolumeSliderContainer { flex: 1 1 auto; min-width: 0; width: auto !important; margin: 0 6px 0 0; }
+html:not(.layout-tv) .videoOsdBottom .osdVolumeSlider { touch-action: none; }
+/* Keep the native thumb geometry aligned with Jellyfin's track, but only paint the line. */
+html:not(.layout-tv) .videoOsdBottom .osdVolumeSlider::-webkit-slider-thumb { opacity: 0; }
+html:not(.layout-tv) .videoOsdBottom .osdVolumeSlider::-moz-range-thumb { opacity: 0; }
+html:not(.layout-tv) .videoOsdBottom .osdVolumeSlider:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 999px; }
+html:not(.layout-tv) .videoOsdBottom.videoOsdBottom-hidden .volumeButtons { pointer-events: none; }
 
 /* skip-intro / up-next prompts */
 html:not(.layout-tv) .upNextContainer,
