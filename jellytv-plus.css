@@ -182,6 +182,33 @@ html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child::before {
   pointer-events: none;
 }
 
+/* Back takes the wordmark's slot on inner pages. */
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child:has(> .jtv-back)::before { content: none; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .jtv-back {
+  position: absolute;
+  top: 50%;
+  left: max(14px, env(safe-area-inset-left, 0px));
+  transform: translateY(-50%);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--jtv-glass);
+  -webkit-backdrop-filter: var(--jtv-glass-filter);
+  backdrop-filter: var(--jtv-glass-filter);
+  box-shadow: var(--jtv-glass-rim), var(--jtv-glass-shadow);
+  color: #fff;
+  cursor: pointer;
+}
+html:not(.layout-tv) .jtv-back svg { width: 24px; height: 24px; }
+html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .jtv-back:hover { background: var(--jtv-glass-hover); }
+html:not(.layout-tv) .jtv-back:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+html:not(.layout-tv) body:has(#videoOsdPage:not(.hide), .videoOsd-appBar) .MuiAppBar-root > .MuiToolbar-root:first-child > .jtv-back { display: none; }
+
 /* Floating glass tab pill (iPad Apple TV) */
 html:not(.layout-tv) .MuiAppBar-root > .MuiToolbar-root:first-child > .MuiStack-root {
   position: absolute;

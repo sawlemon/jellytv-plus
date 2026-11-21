@@ -335,6 +335,42 @@
   tick();
 })();
 
+/* In-app navigation for Jellyfin's React header. The player keeps its own Back button. */
+(function () {
+  'use strict';
+  if (window.__jellyTvPlusBack) return;
+  window.__jellyTvPlusBack = true;
+
+  var selector = '.MuiAppBar-root > .MuiToolbar-root:first-child';
+  var button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'jtv-back';
+  button.setAttribute('aria-label', 'Back');
+  button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  button.addEventListener('click', function () {
+    // React Router's index counts app entries, unlike history.length, which includes other sites.
+    if (history.state && history.state.idx > 0) history.back();
+    else location.replace('#/home');
+  });
+
+  function update() {
+    var route = location.hash.slice(1).split('?')[0];
+    var toolbar = document.querySelector(selector);
+    if (!toolbar || document.documentElement.classList.contains('layout-tv') ||
+        !route || /^\/(?:home|login|selectserver|addserver|forgotpassword|resetpassword|wizard)?(?:\/|$)/i.test(route)) {
+      button.remove();
+    } else if (button.parentNode !== toolbar) {
+      toolbar.prepend(button);
+    }
+  }
+
+  window.addEventListener('hashchange', update);
+  window.addEventListener('popstate', update);
+  new MutationObserver(update).observe(document.body, { childList: true, subtree: true });
+  new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  update();
+})();
+
 /*
  * Quality badges under movie titles (4K, 1080p, DV = Dolby Vision, HDR10 …), styled by .jtv-quality in jellytv-plus.css.
  * Reads the video stream of each Movie card's item from the server and adds pills after the year line.
